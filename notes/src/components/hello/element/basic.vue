@@ -9,12 +9,12 @@
   			<el-button type="success" @click="findRouter">成功按钮</el-button>
   		</div>
   		<div class="col-md-4">
-  			<el-button type="warning">警告按钮</el-button>
+  			<el-button type="warning" @click="pushHistory">跳到others</el-button>
   			<el-button type="danger" size="small">危险按钮</el-button>
-  			<el-button type="info">信息按钮</el-button>
+  			<el-button type="info" @click="replaceHistory">直接替换路由</el-button>
   		</div>
   		<div class="col-md-4">
-  			<el-button :plain="true" type="danger">危险按钮</el-button>
+  			<el-button :plain="true" type="danger" @click="go">模拟返回</el-button>
   			<el-button :plain="true" type="info" icon="search">搜索</el-button>
   		</div>
   	</div>
@@ -54,6 +54,31 @@ export default {
   methods: {
     findRouter() {
       console.log(this.$router)
+    },
+    pushHistory() {
+      this.$alert('js方法push路由，跳转到 other页面',{
+      confirmButtonText: '确定',
+        callback: () => {
+          this.$router.push({name:'Others',params:{name:'lixing'}})
+        }
+      })
+    },
+    replaceHistory() {
+      this.$alert('replace 路由。点击浏览器的返回按钮，直接返回', {
+        confirmButtonText: '确定',
+        callback: () => {
+          this.$router.replace({name:'Others',params:{name:'lixing'}})
+        }
+      })
+    },
+    go() {
+      this.$router.go(-1);
+    }
+  },
+  watch: {
+    '$route'(to, from) {
+      console.log(to);
+      console.log(from);
     }
   }
 }

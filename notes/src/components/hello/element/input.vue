@@ -125,7 +125,9 @@ export default {
       value6: '',
       value8: '',
       value10: '',
-      swith: true
+      swith: true,
+      time: '',
+      check: false
   	}
   },
   computed: {

@@ -10,7 +10,7 @@ import ElementIndex from '@/components/elementUI/index'
 
 Vue.use(Router)
 
-export default new Router({
+const router =  new Router({
   mode: 'history',
   routes: [
     {
@@ -57,3 +57,10 @@ export default new Router({
     }
   ]
 })
+//关键在这里，设置afterEach钩子函数
+router.afterEach((to, from, next) => {
+  document.title = to.name;
+  console.log('$router after 钩子函数')
+})
+
+export default router;
