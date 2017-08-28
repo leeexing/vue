@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #eee;
+  overflow: hidden;
+}
+body {
+  display: flex;
+  justify-content: center;
+}
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+i {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+
+li {
+  list-style: none;
+}
+
+.slide-top-enter-active {
+  transition: all .5s ease-out;
+}
+.slide-top-leave-active {
+  transition: all 0s ease;
+}
+.slide-top-enter, .slide-top-leave-active {
+  transform: translateY(-450px);
+  opacity: 0;
+}
+
+.showAbout-enter-active {
+  transition: all .4s ease-in-out
+}
+.showAbout-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.showAbout-enter, .showAbout-leave-active {
+  transform: rotateZ(180deg);
+  opacity: 1;
+}
+
+.slide-right-enter-active {
+  transition: all .5s ease
+}
+.slide-right-leave-active {
+  transition: all .2s ease-in;
+}
+.slide-right-enter, .slide-right-leave-active {
+  transform: translateX(-100px);
+  opacity: 0;
+}

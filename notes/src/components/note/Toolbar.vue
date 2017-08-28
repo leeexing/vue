@@ -7,22 +7,21 @@
 </template>
 
 <script>
-import bootstrap from '../../../static/bootstrap/dist/css/bootstrap.min.css'
 export default {
-  computed:{
-    activeNote(){
+  computed: {
+    activeNote () {
       return this.$store.getters.activeNote
     }
   },
-  methods:{
-    addOne(){
-      //通过dispatch分发到actions中的addNote
+  methods: {
+    addOne () {
+      // 通过dispatch分发到actions中的addNote
       this.$store.dispatch('addNote')
     },
-    toggleFavorite(){
+    toggleFavorite () {
       this.$store.dispatch('toggleFavorite')
     },
-    deleteNote(){
+    deleteNote () {
       this.$store.dispatch('deleteNote')
     }
   }

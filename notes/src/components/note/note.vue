@@ -15,7 +15,7 @@ export default {
   components: {
     Toolbar,
     NoteList,
-    Editor 
+    Editor
   }
 }
 </script>

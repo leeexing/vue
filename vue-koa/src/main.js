@@ -3,11 +3,15 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './vuex/store'
+// import router from './router/router'
+import axios from 'axios'
+import store from './store/index'
 import ElementUI from 'element-ui'
-import '../static/bootstrap/dist/css/bootstrap.min.css'
 import 'element-ui/lib/theme-default/index.css'
-Vue.use(ElementUI)
+
+Vue.use(ElementUI) // Vue全局使用
+// Vue.use(axios) // 没有官方文档要求需要这么使用，这么使用会报错 protocol
+Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 

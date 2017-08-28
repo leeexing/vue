@@ -3,11 +3,13 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import store from './vuex/store'
-import ElementUI from 'element-ui'
-import '../static/bootstrap/dist/css/bootstrap.min.css'
-import 'element-ui/lib/theme-default/index.css'
-Vue.use(ElementUI)
+import moment from 'moment'
+import axios from 'axios'
+import vueAxios from 'vue-axios'
+
+moment.locale('zh-cn')
+Vue.prototype.moment = moment
+Vue.use(vueAxios, axios)
 
 Vue.config.productionTip = false
 
@@ -15,7 +17,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
-  store,
   template: '<App/>',
   components: { App }
 })
