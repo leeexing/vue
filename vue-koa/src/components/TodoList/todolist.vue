@@ -11,7 +11,7 @@
           <el-col :xs="24">
             <template v-if="!Done"> <!--v-if和v-for不能同时在一个元素内使用，因为Vue总会先执行v-for-->
               <template v-for="(item, index) in list">
-                <div class="todo-list" v-if="item.status == false">
+                <div class="todo-list" v-if="item.status == false" :key="item.id">
                   <span class="item">
                     {{ index + 1 }}. {{ item.content }}
                   </span>
@@ -30,7 +30,7 @@
         <el-tab-pane label="已完成事项" name="second">
           <template v-if="count > 0">
             <template v-for="(item, index) in list">
-              <div class="todo-list" v-if="item.status == true">
+              <div class="todo-list" v-if="item.status == true" :key="item.id">
                 <span class="item finished">
                   {{ index + 1 }}. {{ item.content }}
                 </span>
@@ -51,6 +51,7 @@
 
 <script>
   // import {mapState} from 'vuex'
+  // const jwt = require('jsonwebtoken')
   export default {
     name: 'todolist',
     data () {
@@ -58,12 +59,20 @@
         todos: '',
         activeName: 'first',
         list: [],
-        count: 0
+        count: 0,
+        id: '' // 新增用户id属性，用于区分用户
       }
     },
-    // mounted () {
-
-    // },
+    created () {
+      let userInfo = this.getUserInfo()
+      if (userInfo !== null) {
+        this.id = userInfo.id
+        this.name = userInfo.name
+      } else {
+        this.id = ''
+        this.name = 'LEEING'
+      }
+    },
     computed: {
       Done () {
         let count = 0
@@ -77,10 +86,10 @@
         } else {
           return false
         }
-      },
-      name () {
-        return this.$store.getters.username
       }
+      // name () {
+      //   return this.$store.getters.username
+      // }
     },
     methods: {
       addTodos () {
@@ -112,8 +121,17 @@
         this.$set(this.list[index], 'status', false)
         this.$message({
           type: 'info',
-          message: '人物还原'
+          message: '任务还原~~'
         })
+      },
+      getUserInfo () {
+        let token = JSON.parse(sessionStorage.getItem('vue-koa-token'))
+        console.log(token)
+        if (token !== null && token !== 'null') {
+          return token
+        } else {
+          return null
+        }
       }
     }
   }

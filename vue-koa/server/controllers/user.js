@@ -1,5 +1,7 @@
 const User = require('../models/User')
-const jwt = require('koa-jwt') // 引入koa-jwt
+// const jwt = require('koa-jwt') // 引入koa-jwt. koa2中使用方法不同了
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
 async function getUserById (name) {
   const userInfo = await User.findOne({username: name})
@@ -15,11 +17,13 @@ async function getUserInfo (ctx, next) {
 
 async function postUserAuth (ctx, next) {
   let data = ctx.request.body // post过来的数据存在request.body里面
-  let userInfo = await getUserById(data.name)
+  let userInfo = await getUserById(data.username)
 
   if (userInfo !== null) {
-    if (userInfo.password !== data.password) {
-      this.body = {
+    // if (userInfo.password !== data.password) {
+    console.log(userInfo.password)
+    if (!bcrypt.compareSync(data.password, userInfo.password)) { // 第一个参数必须是用户输入的数据
+      ctx.body = {
         success: false, // success标志位是方便前端判断返回是否正确
         message: '密码错误！'
       }
@@ -28,11 +32,12 @@ async function postUserAuth (ctx, next) {
         name: userInfo.username,
         id: userInfo._id
       }
-      let secret = 'vue-koa-lee'
-      let token = jwt.sign(userToken, secret)
+      // let secret = 'vue-koa-token' // 指定秘钥；合适之后用来判断 token 合法性的标识
+      // let token = jwt.sign(userToken, secret) // 签发 token
       ctx.body = {
         success: true,
-        token // 返回token
+        message: '用户登录成功过',
+        token: userToken // 返回token
       }
     }
   } else {

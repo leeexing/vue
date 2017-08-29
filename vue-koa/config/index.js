@@ -4,9 +4,9 @@ var path = require('path')
 module.exports = {
   build: {
     env: require('./prod.env'),
-    index: path.resolve(__dirname, '../dist/index.html'),
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
+    index: path.resolve(__dirname, '../dist/index.html'), // 指定 index 打包之后的存放路径
+    assetsRoot: path.resolve(__dirname, '../dist'), // 指定webpack的入口文件打包之后的存放地址
+    assetsSubDirectory: 'static', // 指定webpack的入口文件打包之后存放地址的子路径
     assetsPublicPath: '/',
     productionSourceMap: true,
     // Gzip off by default as many popular static hosts such as
@@ -29,6 +29,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/admin': {
+        target: 'http://localhost:8081',
+        changeOrigin: true
+      },
+      '/user': {
         target: 'http://localhost:8081',
         changeOrigin: true
       },
