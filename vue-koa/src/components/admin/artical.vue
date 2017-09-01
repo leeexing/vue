@@ -170,14 +170,17 @@ export default {
       this.currentPage = val
     },
     certainEdit () {
-      if (!_.isEqual(this.oldData.title, this.formLabelAlign.title) &&
+      if (!(!_.isEqual(this.oldData.title, this.formLabelAlign.title) &&
         !_.isEqual(this.oldData.brife, this.formLabelAlign.brife) &&
-        !_.isEqual(this.oldData.content, this.formLabelAlign.content)) {
+        !_.isEqual(this.oldData.content, this.formLabelAlign.content))) {
         this.$message.info('没有内容变更哦')
         console.log(_.isEqual(this.oldData.title, this.formLabelAlign.title))
         console.log(_.isEqual(this.oldData.brife, this.formLabelAlign.brife))
         console.log(_.isEqual(this.oldData.content, this.formLabelAlign.content))
       } else {
+        console.log(!_.isEqual(this.oldData.title, this.formLabelAlign.title))
+        console.log(_.isEqual(this.oldData.brife, this.formLabelAlign.brife))
+        console.log(_.isEqual(this.oldData.content, this.formLabelAlign.content))
         this.$message.info('有内容变更哦')
       }
       // if (_.isEqual(this.oldData.brife, this.formLabelAlign.brife)) {
