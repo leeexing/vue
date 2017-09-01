@@ -5,9 +5,11 @@ export default {
   // 用户名
   username: '',
   hasLocation: false,
-  isLogin: false,
+  isAdmin: true,
+  isRegister: false,
   isLogined: false,
-  ismask: false,
+  isShowMask: false,
+  collapseSideNav: false,
   telephone: '',
   timeCount: true,
   startOrEnd: '',

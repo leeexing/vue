@@ -1,9 +1,13 @@
+/**
+ * 老式写法。将一大堆逻辑控制写在一起，没有很好的分离开来
+ */
 const router = require('koa-router')()
 const fs = require('fs')
 const {markdown} = require('markdown')
 
 // 数据表结构
 const User = require('../models/User')
+const Content = require('../models/Content')
 
 // 统一一个数据格式
 let responseData = {
@@ -12,8 +16,8 @@ let responseData = {
 }
 
 // 后台登录首页
-router.get('/login', async (ctx, next) => {
-  ctx.body = '登录首页'
+router.get('/', async (ctx, next) => {
+  ctx.body = '后台管理首页，你 get 到了'
 })
 
 // 登录
@@ -52,7 +56,18 @@ router.post('/login', async (ctx, next) => {
 
 // 发布话题页面
 router.get('/topic', async (ctx, next) => {
-  ctx.body = '发布话题'
+  let result = await Content.find()
+  if (result) {
+    ctx.body = {
+      success: true,
+      message: result
+    }
+  } else {
+    ctx.body = {
+      success: false,
+      message: '没有数据'
+    }
+  }
 })
 
 // 获取markdown的内容

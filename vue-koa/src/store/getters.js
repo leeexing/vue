@@ -3,6 +3,9 @@
  */
 export default {
   username: state => state.username,
-  shadowActive: state => state.shadowActive,
+  isAdmin: state => state.isAdmin,
+  isRegister: state => state.isRegister,
+  isShowMask: state => state.isShowMask,
+  collapseSideNav: state => state.collapseSideNav,
   todoList: state => state.todoList
 }

@@ -2,12 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login/login'
 import TodoList from '@/components/TodoList/todolist'
-import index from '@/views/index'
 import Topic from '@/components/topic/topicList'
+import Home from '@/components/admin/firstpage'
+import Userlist from '@/components/admin/userlist'
+import Artical from '@/components/admin/artical'
+import index from '@/components/views/index'
+import Admin from '@/components/views/admin'
 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   mode: 'history',
   routes: [
     {
@@ -36,32 +40,33 @@ export default new Router({
           component: Topic
         }
       ]
+    },
+    {
+      path: '/myadmin',
+      name: 'Admin',
+      component: Admin,
+      children: [
+        {
+          path: '/',
+          name: 'home',
+          component: Home
+        },
+        {
+          path: '/myadmin/userlist',
+          name: 'userlist',
+          component: Userlist
+        },
+        {
+          path: '/myadmin/artical',
+          name: 'Artical',
+          component: Artical
+        }
+      ]
     }
   ]
 })
 
-/* const router = new Router({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/todolist',
-      name: 'Todolist',
-      component: TodoList
-    }
-  ]
-})
-
-router.beforeEach((to, from, next) => {
+/* router.beforeEach((to, from, next) => {
   const token = sessionStorage.getItem('vue-koa-token')
   if (to.path === '/') { // 如果是跳转到登录页
     if (token !== null && token !== 'null') {
@@ -76,6 +81,6 @@ router.beforeEach((to, from, next) => {
       next('/') // 否则跳转回登录页
     }
   }
-})
+}) */
 
-export default router */
+export default router

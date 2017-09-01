@@ -1,25 +1,65 @@
 <template>
   <div class="header">
     <h3>{{blogName}}</h3>
+    <!-- <p class="logout"><a href="#" @click="logout">给我一首歌的时间</a></p> -->
+    <el-dropdown>
+      <span class="el-dropdown-link">
+        菜单<i class="el-icon-caret-bottom el-icon--right"></i>
+      </span>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item><a @click="logout" href="#">退出</a></el-dropdown-item>
+        <el-dropdown-item v-if="isAdmin"><a class="logoutBtn" href="/myadmin">后台管理</a></el-dropdown-item>
+        <el-dropdown-item divided>设置</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
   </div>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
   export default {
+    name: 'header',
     data () {
       return {
         blogName: "LEEING's Blog"
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'isAdmin'
+      ])
+    },
+    methods: {
+      logout () {
+        this.$confirm('是否确定退出博客？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('/user/logout', null)
+            .then(ret => {
+              if (ret.data.success) {
+                this.$router.push('/login')
+              }
+            })
+            .catch(err => {
+              this.$message.error(err)
+            })
+        }).catch(() => {
+          this.$message.info('已取消')
+        })
       }
     }
   }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .header {
     position: fixed;
     top:0;
     left: 0;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     height: 80px;
     width: 100%;
@@ -31,6 +71,22 @@
       color: #f90;
       font-size: 24px;
       font-weight: 600;
+    }
+    .logout {
+      a {
+        padding: 5px 10px;
+        color: #550;
+        font-weight: 600;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        &:hover {
+          color: #f90;
+        }
+      }
+    }
+    .logoutBtn {
+      display: block;
+      z-index: 9;
     }
   }
 </style>

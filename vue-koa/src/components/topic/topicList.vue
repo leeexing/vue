@@ -1,6 +1,6 @@
 <template>
   <div class="topic">
-    <el-row>
+    <el-row v-loading.body="loading">
       <el-col class="topic-item" :span="24" v-for="item in topicList" :key="item.id">
         <h1 class="title">{{item.title}}</h1>
         <p class="time">
@@ -24,23 +24,31 @@
 
 <script>
 // import data from './data'
-import data from '@/util/mock'
+// import data from '@/util/mock' // 这种事静态方法，没有设置url，没有使用$http请求
+import '@/util/mock2'
+
 export default {
   name: 'topic',
   data () {
     return {
-      topicData: null,
-      totalTopics: null,
+      topicData: [],
+      totalTopics: 0,
       pageSize: 5,
-      currentPage: 1
+      currentPage: 1,
+      loading: false
     }
   },
   created () {
-    // this.$http.get('./data.js', (data) => {
-    //   console.log(data)
-    // })
-    this.topicData = data.topics
-    this.totalTopics = this.topicData.length
+    this.$http.get('/admin/topiclist')
+      .then(data => {
+        this.topicData = data.data.topics
+        this.totalTopics = this.topicData.length
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    /* this.topicData = data.topics // 这种是静态获取资源的笨方法
+    this.totalTopics = this.topicData.length */
   },
   computed: {
     topicList () {

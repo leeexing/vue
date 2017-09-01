@@ -1,5 +1,8 @@
 @charset "utf-8";
 /* 初始化CSS */
+* {
+  box-sizing: border-box;
+}
 html, body, div, p, ul, li, ol, dl, dd, dt, p, h1, h2, h3, h4, h5, h6, form, fieldset, legend, img { margin:0; padding:0;word-wrap:break-word;word-break:break-all; }fieldset, img { border:none; }
 h1, h2, h3, h4, h5, h6{font-weight: normal;}
 fieldset, img { border:none; }
