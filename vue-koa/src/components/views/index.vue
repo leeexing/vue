@@ -68,6 +68,9 @@
   flex-direction: column;
   max-width: 1000px;
   margin: 80px auto 0;
+  .topic-wrap {
+    margin-bottom: 30px;
+  }
 }
 .userinfo {
   margin-top: 20px;
@@ -113,9 +116,7 @@
   }
 }
 footer {
-  // position: absolute;
-  // left: 0;
-  // bottom: 0;
+  flex-basis: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;

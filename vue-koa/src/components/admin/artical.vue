@@ -7,11 +7,11 @@
       <div class="search">
         <el-row>
           <el-col :span="4">
-            <el-input v-model="userSearch" placeholder="标题"></el-input>
+            <el-input v-model="articalSearch" placeholder="标题"></el-input>
           </el-col>
           <el-col :span="6" :offset="1">
-            <el-button type="primary">查询</el-button>
-            <el-button type="primary">新增</el-button>
+            <el-button type="primary" @click="searchArtical">查询</el-button>
+            <el-button type="primary"><router-link to="/myadmin/artical/addnew">新增</router-link></el-button>
           </el-col>
         </el-row>
       </div>
@@ -80,7 +80,7 @@
     </div>
     <div class="mask" :class="{show: showEdit}">
       <div class="artical">
-        <h2 class="title">文章修改</h2>
+        <h2 class="title">{{editWrapTitle}}</h2>
         <el-form label-position="top" label-width="100px" :model="formLabelAlign">
           <el-form-item label="文章标题">
             <el-input v-model="formLabelAlign.title"></el-input>
@@ -118,8 +118,8 @@ export default {
   name: 'home',
   data () {
     return {
-      breadinfo: ['用户列表'],
-      userSearch: '',
+      breadinfo: [{name: '博客管理'}, {name: '文章列表'}],
+      searchData: {},
       topicData: [],
       totalTopics: 0,
       pageSize: 5,
@@ -130,71 +130,106 @@ export default {
         content: ''
       },
       oldData: {},
-      showEdit: false
+      showEdit: false,
+      articalSearch: '',
+      editWrapTitle: '文章修改'
     }
   },
   mounted () {
-    this.$http.get('/admin/topic')
-      .then(ret => {
-        this.topicData = ret.data.message
-        this.totalTopics = this.topicData.length
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.getArticalInfo()
   },
   computed: {
     tableData () {
+      let reg = RegExp(this.articalSearch, 'i')
+      this.searchData = this.topicData.filter(item => item.title.match(reg) !== null)
+      this.totalTopics = this.searchData.length
       let start = (this.currentPage - 1) * this.pageSize
       let end = Math.min(this.totalTopics, this.pageSize * this.currentPage)
-      return this.topicData.slice(start, end)
+      return this.searchData.slice(start, end)
     }
   },
   methods: {
+    // 新增文章
+    addNewArtical () {
+      this.formLabelAlign = {
+        title: '',
+        brife: '',
+        content: ''
+      }
+      this.editWrapTitle = '新增文章'
+      this.showEdit = true
+    },
     handleEdit (index, row) {
-      // let obj = {
-      //   title: row.title,
-      //   brife: row.brife,
-      //   content: row.content
-      // }
-      // this.formLabelAlign = obj
-      // this.oldData = row
-      this.oldData = this.formLabelAlign = row
+      let obj = {
+        title: row.title,
+        brife: row.brife,
+        content: row.content,
+        id: row._id
+      }
+      this.formLabelAlign = obj
+      this.oldData = row
       this.showEdit = true
     },
     handleDelete (index, row) {
       console.log(index)
-      this.topicData.splice(index, 1)
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.topicData.splice(index, 1)
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
     },
     currentChange (val) {
       this.currentPage = val
     },
     certainEdit () {
-      if (!(!_.isEqual(this.oldData.title, this.formLabelAlign.title) &&
-        !_.isEqual(this.oldData.brife, this.formLabelAlign.brife) &&
-        !_.isEqual(this.oldData.content, this.formLabelAlign.content))) {
+      if (_.isEqual(this.oldData.title, this.formLabelAlign.title) &&
+        _.isEqual(this.oldData.brife, this.formLabelAlign.brife) &&
+        _.isEqual(this.oldData.content, this.formLabelAlign.content)) {
         this.$message.info('没有内容变更哦')
-        console.log(_.isEqual(this.oldData.title, this.formLabelAlign.title))
-        console.log(_.isEqual(this.oldData.brife, this.formLabelAlign.brife))
-        console.log(_.isEqual(this.oldData.content, this.formLabelAlign.content))
       } else {
-        console.log(!_.isEqual(this.oldData.title, this.formLabelAlign.title))
-        console.log(_.isEqual(this.oldData.brife, this.formLabelAlign.brife))
-        console.log(_.isEqual(this.oldData.content, this.formLabelAlign.content))
-        this.$message.info('有内容变更哦')
+        let postData = {
+          title: this.formLabelAlign.title,
+          brife: this.formLabelAlign.brife,
+          content: this.formLabelAlign.content,
+          id: this.formLabelAlign.id
+        }
+        this.$http.post('/api/editArtical', postData)
+        .then(ret => {
+          if (!ret.data.success) {
+            this.$message.error(ret.data.message)
+            return
+          }
+          this.$message.info(ret.data.message)
+          this.getArticalInfo()
+        })
+        .catch(err => {
+          console.log(err)
+        })
       }
-      // if (_.isEqual(this.oldData.brife, this.formLabelAlign.brife)) {
-      //   this.$message.info('没有内容变更哦')
-      //   console.log(this.oldData.brife)
-      //   console.log(this.formLabelAlign.brife)
-      //   console.log(this.oldData.brife === this.formLabelAlign.brife)
-      // } else {
-      //   this.$message.info('有内容变更哦')
-      // }
       this.showEdit = false
     },
     cancelEdit () {
       this.showEdit = false
+    },
+    searchArtical () {
+      this.$notify({
+        title: '成功',
+        message: this.articalSearch || '您没有输入搜索内容',
+        type: 'success'
+      })
+    },
+    getArticalInfo () {
+      this.$http.get('/admin/topic')
+        .then(ret => {
+          this.topicData = ret.data.message
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
   components: {
@@ -213,6 +248,9 @@ export default {
 .content {
   padding-top: 15px;
   padding-left: 15px;
+  a {
+    color: #fff;
+  }
 }
 .pages {
   display: flex;

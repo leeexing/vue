@@ -6,6 +6,10 @@ import Topic from '@/components/topic/topicList'
 import Home from '@/components/admin/firstpage'
 import Userlist from '@/components/admin/userlist'
 import Artical from '@/components/admin/artical'
+import Category from '@/components/admin/category'
+import AddNewArtical from '@/components/admin/addNewArtical'
+import AMap from '@/components/admin/Map/map'
+import OneIndex from '@/components/admin/One/one'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
 
@@ -60,6 +64,26 @@ let router = new Router({
           path: '/myadmin/artical',
           name: 'Artical',
           component: Artical
+        },
+        {
+          path: '/myadmin/category',
+          name: '文章分类',
+          component: Category
+        },
+        {
+          path: '/myadmin/artical/addnew',
+          name: '新增文章',
+          component: AddNewArtical
+        },
+        {
+          path: '/myadmin/map',
+          name: '地图',
+          component: AMap
+        },
+        {
+          path: '/myadmin/one',
+          name: '一个',
+          component: OneIndex
         }
       ]
     }

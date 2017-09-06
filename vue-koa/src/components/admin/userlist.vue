@@ -10,7 +10,7 @@
             <el-input v-model="userSearch" placeholder="用户名"></el-input>
           </el-col>
           <el-col :span="6" :offset="1">
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" @click="search">查询</el-button>
             <el-button type="primary">新增</el-button>
           </el-col>
         </el-row>
@@ -91,12 +91,12 @@
 import BreadCrumb from './breadcrumb'
 import VMask from '../Mask/mask'
 import EditUser from '../admin/editUser'
-// import Mock from 'mockjs'
+import Mock from 'mockjs'
 export default {
   name: 'home',
   data () {
     return {
-      breadinfo: ['用户列表'],
+      breadinfo: [{name: '用户列表'}],
       userSearch: '',
       topicData: [],
       totalTopics: 0,
@@ -147,6 +147,10 @@ export default {
     closeEditWrap () {
       this.showEdit = false
       this.$store.dispatch('close_mask')
+    },
+    search () {
+      let time = Mock.mock('@now')
+      console.log(time)
     }
   },
   components: {

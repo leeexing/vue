@@ -1,4 +1,6 @@
 const User = require('../models/User')
+const Content = require('../models/Content')
+const Category = require('../models/Category')
 const _ = require('lodash')
 
 // 获取用户列表
@@ -43,7 +45,63 @@ async function editUserInfo (ctx) {
   }
 }
 
+// 修改文章内容
+async function editArtical (ctx) {
+  let postData = ctx.request.body
+  let updateData = {
+    $set: {
+      title: postData.title,
+      brife: postData.brife,
+      content: postData.content
+    }
+  }
+  let result = await Content.findOne({_id: postData.id})
+  console.log(result)
+  if (result) {
+    await Content.update({_id: postData.id}, updateData)
+    ctx.body = {
+      success: true,
+      message: '内容修改成功'
+    }
+  } else {
+    ctx.body = {
+      success: false,
+      message: '文章未找到，请确认'
+    }
+  }
+}
+
+// 增加新的文章 保存
+async function addNewArtical (ctx) {
+  let postData = ctx.request.body
+  let hasUser = await User.findOne({_id: postData.user})
+  if (!hasUser) {
+    ctx.body = {
+      success: false,
+      message: '参数错误，用户名不存在'
+    }
+    return
+  }
+  await Content(postData).save()
+  ctx.body = {
+    success: true,
+    message: '恭喜你，文章保存成功！'
+  }
+}
+
+// 获取文章分类
+async function getCategory (ctx) {
+  let result = await Category.find()
+  ctx.body = {
+    success: true,
+    message: result
+  }
+}
+
 module.exports = {
   getUserList,
-  editUserInfo
+  editUserInfo,
+  editArtical,
+  addNewArtical,
+  getCategory
 }

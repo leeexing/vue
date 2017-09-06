@@ -54,9 +54,9 @@ router.post('/login', async (ctx, next) => {
   }
 })
 
-// 发布话题页面
+// 获取文章列表详情
 router.get('/topic', async (ctx, next) => {
-  let result = await Content.find()
+  let result = await Content.find().sort({_id: -1})
   if (result) {
     ctx.body = {
       success: true,

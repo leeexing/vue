@@ -47,4 +47,19 @@ hr{margin:0;}
 	display: none;
 }
 
+.scroll-bar::-webkit-scrollbar {
+  width: 10px;
+  height: 16px;
+  padding: 5px 0;
+  background: #aaa;
+  border-radius: 5px;
+}
+.scroll-bar::-webkit-scrollbar-thumb {
+  width: 10px;
+  background: #bbb;
+  border-radius: 5px;
+}
+.scroll-bar::-webkit-scrollbar-track {
+  background: #ddd;
+}
 

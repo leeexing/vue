@@ -39,6 +39,10 @@ module.exports = {
       '/api': {
         target: 'http://localhost:8081',
         changeOrigin: true
+      },
+      '/one': {
+        target: 'http://211.152.49.184:7001',
+        changeOrigin: true
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

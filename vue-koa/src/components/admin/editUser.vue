@@ -51,6 +51,7 @@ export default {
         .then(ret => {
           console.log(ret)
           this.$message.info(ret.data.message)
+          this.$emit('closeEdit')
         })
         .catch(err => {
           console.log(err)

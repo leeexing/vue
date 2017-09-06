@@ -39,6 +39,7 @@
           this.$http.post('/user/logout', null)
             .then(ret => {
               if (ret.data.success) {
+                sessionStorage.setItem('vue-koa-token', '')
                 this.$router.push('/login')
               }
             })
@@ -72,17 +73,8 @@
       font-size: 24px;
       font-weight: 600;
     }
-    .logout {
-      a {
-        padding: 5px 10px;
-        color: #550;
-        font-weight: 600;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        &:hover {
-          color: #f90;
-        }
-      }
+    .el-dropdown {
+      cursor: pointer;
     }
     .logoutBtn {
       display: block;

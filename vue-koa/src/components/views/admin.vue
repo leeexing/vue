@@ -5,7 +5,7 @@
     </div>
     <div class="main">
       <v-sidenav></v-sidenav>
-      <div class="content">
+      <div class="content scroll-bar">
         <router-view></router-view>
       </div>
     </div>
@@ -32,7 +32,9 @@ export default {
 #admin {
   display: flex;
   flex-direction: column;
-  flex: auto;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   .header {
     height: 60px;
   }
@@ -45,6 +47,7 @@ export default {
     }
     .content {
       flex: auto;
+      overflow-y: auto;
     }
   }
 }

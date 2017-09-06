@@ -35,7 +35,7 @@ export default {
   name: 'home',
   data () {
     return {
-      breadinfo: ['报表详情'],
+      breadinfo: [{name: '报表详情'}],
       canvasId: 'myCanvas',
       type: 'bar',
       width: 500,
