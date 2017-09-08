@@ -54,43 +54,26 @@
                 <ul class="pasado">
                   <li v-for="(item, index) in menu.list" :key="item.id">
                     <span>VOL.{{+menu.vol - index}}</span>
-                    <a href="#">{{item.title}}</a>
+                    <a @click="saveEssayId(item.content_id)">{{item.title}}</a>
                   </li>
                 </ul>
               </div>
-              <div class="artical">
-                <p class="title">ONE 问题</p>
-                <div class="corriente">
-                  <p class="volume">VOL.1795</p>
-                  <p class="one-artical">
-                    <a href="#">你好，小确丧时代</a>
-                    <small> - 赫恩曼妮</small>
-                  </p>
-                </div>
-                <ul class="pasado">
-                  <li>
-                    <span>VOL.1794</span>
-                    <a href="#">居然有人问，为什么《敦刻尔克》比《战狼》好看</a>
+              <div class="music">
+                <p class="title">ONE 音乐</p>
+                <p class="mymusic"><router-link to="/myadmin/one/music">去你的音乐音乐</router-link></p>
+                <ul class="music-ul">
+                  <li class="music-list" v-for="item in musicData" :key="item.id">
+                    <div class="cover">
+                      <img :src="item.img_url" alt="">
+                    </div>
+                    <div class="info">
+                      <p class="music-title"><a :href="item.share_url" target="_blank">{{item.forward}}</a></p>
+                      <p class="forward">{{item.subtitle.split(':')[1]}} | {{item.author.user_name}}</p>
+                    </div>
                   </li>
-                  <li>
-                    <span>VOL.1794</span>
-                    <a href="#">我在知乎上看到一个奇怪的提问：“为什么豆瓣给《敦刻尔克》的评分比《战狼2》高？”</a>
-                  </li>
-                  <li>
-                    <span>VOL.1794</span>
-                    <a href="#"> 发生问题时别逃走 - 陈雪</a>
-                  </li>
-                  <li>
-                    <span>VOL.1794</span>
-                    <a href="#">通过基础的 24 分栏，迅速简便地创建布局。</a>
-                  </li>
-                  <li>
-                    <span>VOL.1794</span>
-                    <a href="#">通过 row 和 col 组件，并通过 col 组件的 span 属性我们就可以自由地组合布局。</a>
-                  </li>
-                  <li>
-                    <span>VOL.1794</span>
-                    <a href="#">由于是在 「ONE · 一个」v4.2.2 版本中进行获取的，所以 API 的版本也是 v4.2.2 。</a>
+                  <li class="music-more">
+                    <i v-show="moreShow" class="el-icon-caret-bottom" @click="getMore"></i>
+                    <i v-show="!moreShow" class="el-icon-caret-top" @click="packUpMore"></i>
                   </li>
                 </ul>
               </div>
@@ -99,7 +82,7 @@
         </div>
       </div>
       <p class="one-foot">
-        App「一个」
+        App<span>「一个」</span>
       </p>
     </div>
   </div>
@@ -128,55 +111,31 @@ export default {
           }
         }
       ],
-
+      musicData: [
+        {
+          img_url: '',
+          forward: '',
+          subtitle: 'a:Music',
+          author: {user_name: 'One'}
+        }
+      ],
+      musicLists: {},
+      moreShow: true,
       index: 0,
       breadinfo: [{name: '扩展应用'}, {name: '一个'}]
     }
   },
   created () {
     let that = this
-    /* async function getId () {
-      return new Promise((resolve, reject) => {
-        that.$http.get('http://v3.wufazhuce.com:8000/api/onelist/idlist')
-        .then(ret => {
-          resolve(ret)
-        })
-        .catch(err => {
-          reject(err)
-        })
-      })
-    }
-    function getOneList (id) {
-      let url = `http://v3.wufazhuce.com:8000/api/onelist/${id}/0`
-      return new Promise((resolve, reject) => {
-        that.$http.get(url)
-          .then(ret => {
-            resolve(ret)
-          })
-          .catch(err => {
-            reject(err)
-          })
-      })
-    }
-    async function getAllLists (ids) {
-      let arrs = []
-      ids.forEach(item => {
-        arrs.push(getOneList(item))
-      })
-      return new Promise((resolve, reject) => {
-        Promise.all(arrs).then(ret => {
-          resolve(ret)
-        }).catch(err => {
-          reject(err)
-        })
-      })
-    } */
     let dateArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     async function getData () {
       let ids = await oneServer.getId(that)
       ids = ids.map(item => +item).slice(0, 7)
+      // 首页左侧图文数据
       let lists = await oneServer.getAllLists(that, ids)
-      console.log(lists)
+      // 音乐列表数据
+      that.musicLists = await oneServer.getMusicLists(that)
+      that.musicData = that.musicLists.slice(0, 6)
       let data = lists.map(item => {
         let data = item.data.data
         let date = data.date.slice(0, 10).split('-').map((item, index) => {
@@ -198,7 +157,7 @@ export default {
           menu: data.menu
         }
       })
-      console.log(data)
+      // console.log(data)
       that.oneData = data
     }
     getData()
@@ -228,6 +187,19 @@ export default {
     },
     swiper (index) {
       this.index = index
+    },
+    saveEssayId (value) {
+      console.log(value)
+      this.$store.dispatch('setOneEssayId', value)
+      this.$router.push('/myadmin/one/essay')
+    },
+    getMore () {
+      this.moreShow = false
+      this.musicData = this.musicLists
+    },
+    packUpMore () {
+      this.moreShow = false
+      this.musicData = this.musicLists.slice(0, 6)
     }
   },
   components: {
@@ -252,6 +224,18 @@ export default {
       background: #01aef0;
       text-align: center;
       margin-bottom: 10px;
+    }
+    .one-foot {
+      height: 36px;
+      line-height: 36px;
+      background-color: #222;
+      color: #fff;
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+      span {
+        color: #01aef0;
+      }
     }
     .content-one {
       padding-bottom: 10px;
@@ -358,59 +342,138 @@ export default {
           }
         }
       }
-      .sidec {
-        padding-left: 10px;
-        .artical {
-          background-color: #f6f6f6;
-          .title {
-            margin-bottom: 10px;
-            padding: 5px 10px;
-            background-color: #01aef0;
-            font-size: 18px;
-            line-height: 32px;
-            font-weight: 400;
-            color: #fff;
+    }
+  }
+}
+.sidec {
+  padding-left: 10px;
+  .artical {
+    background-color: #f6f6f6;
+    .title {
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      background-color: #01aef0;
+      font-size: 18px;
+      line-height: 32px;
+      font-weight: 400;
+      color: #fff;
+    }
+    .corriente {
+      padding-left: 10px;
+      font-family: "Microsoft YaHei";
+      .volume {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+      .one-artical {
+        padding: 15px 0;
+        color: #428bca;
+        &:hover {
+          text-decoration: underline;
+          color: #2a6496;
+          a {
+            color: #2a6496;
           }
-          .corriente {
-            padding-left: 10px;
-            font-family: "Microsoft YaHei";
-            .volume {
-              font-size: 12px;
-              margin-bottom: 5px;
-            }
-            .one-artical {
-              padding: 15px 0;
-              color: #428bca;
-              a {
-                color: #428bca;
-                font-size: 18px;
-              }
-            }
-          }
-          .pasado {
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            li {
-              font-size: 12px;
-              height: 26px;
-              line-height: 26px;
-              padding: 0 10px;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-            }
-          }
+        }
+        a {
+          color: #428bca;
+          font-size: 18px;
         }
       }
     }
-    .one-foot {
-      height: 36px;
-      line-height: 36px;
-      background-color: #222;
-      color: #fff;
-      text-align: center;
-      font-weight: 600;
+    .pasado {
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      li {
+        font-size: 12px;
+        height: 26px;
+        line-height: 26px;
+        padding: 0 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        span {
+          margin-right: 5px;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  .music {
+    background-color: #f6f6f6;
+    .mymusic {
+      padding: 5px 10px;
+      a {
+        color: #428bca;
+        &:hover {
+          text-decoration: underline;
+          color: #2a6496;
+        }
+      }
+    }
+    .title {
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      background-color: #01aef0;
       font-size: 18px;
+      line-height: 32px;
+      font-weight: 400;
+      color: #fff;
+    }
+    .music-ul {
+      padding: 10px 0;
+      .music-list {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        height: 80px;
+        border-bottom: 1px solid #ddd;
+        .cover {
+          width: 20%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          img {
+            width: 100%;
+          }
+        }
+        .info {
+          width: 75%;
+          p {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+          .music-title {
+            height: 32px;
+            line-height: 32px;
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+          .forward {
+            line-height: 24px;
+            font-size: 14px;
+            color: #999;
+          }
+        }
+      }
+      .music-more {
+        padding-top: 5px;
+        text-align: center;
+        i {
+          color: #01aef0;
+          cursor: pointer;
+          opacity: .5;
+          &:hover {
+            opacity: 1;
+            transition: all .3s ease;
+          }
+        }
+      }
     }
   }
 }

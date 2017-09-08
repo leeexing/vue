@@ -25,6 +25,7 @@ export default {
         {name: '2014', value: Mock.mock('@integer(1000, 2000)')},
         {name: '2015', value: Mock.mock('@integer(1000, 2000)')},
         {name: '2016', value: Mock.mock('@integer(1000, 2000)')},
+        {name: '2016', value: Mock.mock('@integer(1000, 2000)')},
         {name: '2017', value: Mock.mock('@integer(1000, 2000)')}
       ],
       options: {

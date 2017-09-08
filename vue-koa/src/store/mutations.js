@@ -8,6 +8,7 @@ const SWITCH_REGISTER = 'SWITCH_REGISTER'
 const COLLAPSE_SIDENAV = 'COLLAPSE_SIDENAV'
 const SET_ADMIN = 'SET_ADMIN'
 const SHOW_MASK = 'SHOW_MASK'
+const ONE_ESSAY_ID = 'ONE_ESSAY_ID'
 // const SHOW_SUGGEST = 'SHOW_SUGGEST'
 // const SLOSE_SUGGEST = 'CLOSE_SUGGEST'
 // const INIT_MAP = 'INIT_MAP'
@@ -43,5 +44,9 @@ export default {
   // 记录是否是管理员
   [SET_ADMIN] (state, value) {
     state.isAdmin = value
+  },
+  // ONE 文章 ID
+  [ONE_ESSAY_ID] (state, essayId) {
+    state.oneEssayId = essayId
   }
 }

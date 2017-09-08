@@ -43,6 +43,20 @@ module.exports = {
       '/one': {
         target: 'http://211.152.49.184:7001',
         changeOrigin: true
+      },
+      '/music': {
+        target: 'http://s.music.qq.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/music': '/music'
+        }
+      },
+      '/music2': {
+        target: 'http://s.music.qq.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/music2': '/music2'
+        }
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

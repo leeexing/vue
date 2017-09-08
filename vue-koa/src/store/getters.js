@@ -7,5 +7,7 @@ export default {
   isRegister: state => state.isRegister,
   isShowMask: state => state.isShowMask,
   collapseSideNav: state => state.collapseSideNav,
-  todoList: state => state.todoList
+  todoList: state => state.todoList,
+  // 一个文章id
+  oneEssayId: state => state.oneEssayId
 }

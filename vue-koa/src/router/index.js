@@ -10,6 +10,8 @@ import Category from '@/components/admin/category'
 import AddNewArtical from '@/components/admin/addNewArtical'
 import AMap from '@/components/admin/Map/map'
 import OneIndex from '@/components/admin/One/one'
+import OneEssay from '@/components/admin/One/essay'
+import OneMusic from '@/components/admin/One/music'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
 
@@ -84,6 +86,16 @@ let router = new Router({
           path: '/myadmin/one',
           name: '一个',
           component: OneIndex
+        },
+        {
+          path: '/myadmin/one/essay',
+          name: '一个-文章',
+          component: OneEssay
+        },
+        {
+          path: '/myadmin/one/music',
+          name: '一个-音乐',
+          component: OneMusic
         }
       ]
     }

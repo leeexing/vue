@@ -10,6 +10,8 @@ export default {
   isLogined: false,
   isShowMask: false,
   collapseSideNav: false,
+  oneEssayId: 0,
+  // 备用
   telephone: '',
   timeCount: true,
   startOrEnd: '',

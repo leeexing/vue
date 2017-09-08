@@ -24,5 +24,8 @@ export default {
   },
   setIsAdmin ({commit}, value) {
     commit('SET_ADMIN', value)
+  },
+  setOneEssayId ({commit}, value) {
+    commit('ONE_ESSAY_ID', value)
   }
 }

@@ -25,6 +25,7 @@ export default {
         {name: Mock.mock('@name'), value: Mock.mock('@integer(1000, 2000)')},
         {name: Mock.mock('@name'), value: Mock.mock('@integer(1000, 2000)')},
         {name: Mock.mock('@name'), value: Mock.mock('@integer(1000, 2000)')},
+        {name: Mock.mock('@name'), value: Mock.mock('@integer(1000, 2000)')},
         {name: Mock.mock('@name'), value: Mock.mock('@integer(1000, 2000)')}
       ],
       options: {
