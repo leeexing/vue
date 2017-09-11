@@ -27,6 +27,7 @@
     "koa-onerror": "^3.1.0",
     "koa-router": "^7.2.1",
     "koa-static": "^4.0.1",
+    "koa2-cors": "^2.0.3",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "lodash": "^4.17.4",

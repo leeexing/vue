@@ -98,10 +98,16 @@ async function getCategory (ctx) {
   }
 }
 
+// 跨域获取音乐数据
+async function getMusic (ctx) {
+  //
+}
+
 module.exports = {
   getUserList,
   editUserInfo,
   editArtical,
   addNewArtical,
-  getCategory
+  getCategory,
+  getMusic
 }

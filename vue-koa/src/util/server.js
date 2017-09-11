@@ -56,8 +56,8 @@ async function getMusicLists (ctx) {
 async function getQQMusic (ctx) {
   return new Promise((resolve, reject) => {
     // ctx.$http.get('/music/101369814.m4a?fromtag=46')
-    ctx.$http.get('/music/musicbox/shop/v3/data/hit/hit_newsong.js')
-    // ctx.$http.get('/music/fcgi-bin/music_search_new_platform?t=0&n=10&aggr=1&cr=1&loginUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=jqminiframe.json&needNewCode=0&p=1&catZhida=0&remoteplace=sizer.newclient.next_song&w=')
+    // ctx.$http.get('/music/musicbox/shop/v3/data/hit/hit_newsong.js')
+    ctx.$http.get('https://news-at.zhihu.com/api/4/news/latest')
       .then(ret => {
         resolve(ret)
       })

@@ -31,5 +31,8 @@ new Vue({
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  data: {
+    Bus: new Vue() // 用于非父子组件之间通信的通道
+  }
 })

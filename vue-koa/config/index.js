@@ -44,18 +44,18 @@ module.exports = {
         target: 'http://211.152.49.184:7001',
         changeOrigin: true
       },
-      '/music': {
+      '/fcgi-bin': {
         target: 'http://s.music.qq.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/fcgi-bin': '/fcgi-bin'
+        }
+      },
+      '/music': {
+        target: 'http://ws.stream.qqmusic.qq.com',
         changeOrigin: true,
         pathRewrite: {
           '^/music': '/music'
-        }
-      },
-      '/music2': {
-        target: 'http://s.music.qq.com',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/music2': '/music2'
         }
       }
     },

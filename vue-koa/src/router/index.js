@@ -12,6 +12,7 @@ import AMap from '@/components/admin/Map/map'
 import OneIndex from '@/components/admin/One/one'
 import OneEssay from '@/components/admin/One/essay'
 import OneMusic from '@/components/admin/One/music'
+import Music from '@/components/admin/Music/music'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
 
@@ -96,6 +97,11 @@ let router = new Router({
           path: '/myadmin/one/music',
           name: '一个-音乐',
           component: OneMusic
+        },
+        {
+          path: '/myadmin/music',
+          name: '音乐-Music',
+          component: Music
         }
       ]
     }

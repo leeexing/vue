@@ -194,7 +194,7 @@ export default {
       this.$router.push('/myadmin/one/essay')
     },
     getMore () {
-      this.moreShow = false
+      // this.moreShow = false
       this.musicData = this.musicLists
     },
     packUpMore () {
@@ -234,7 +234,7 @@ export default {
       font-weight: 600;
       font-size: 18px;
       span {
-        color: #01aef0;
+        color: #cddc39;
       }
     }
     .content-one {

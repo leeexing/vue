@@ -1,6 +1,11 @@
 <template>
   <div id="one-music">
-
+    <div>
+      <bread-crumb :breadinfo="breadinfo"></bread-crumb>
+    </div>
+    <div class="music">
+      <h1>我的音乐我做主！</h1>
+    </div>
   </div>
 </template>
 
@@ -28,6 +33,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+#one-music {
+  .music {
+    margin-top: 10px;
+    padding: 10px;
+    color: #3f51b5;
+  }
+}
 </style>
 

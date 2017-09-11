@@ -4,6 +4,7 @@ const app = new Koa()
 const json = require('koa-json')
 const logger = require('koa-logger')
 const onerror = require('koa-onerror')
+const cors = require('koa2-cors') // 跨域
 
 // 数据库连接
 const mongoose = require('mongoose')
@@ -16,6 +17,20 @@ const index = require('./server/routes/index')
 
 // middleWare
 onerror(app)
+app.use(cors({
+  origin (ctx) {
+    if (ctx.url === '/api/proxy/') {
+      return ''
+    }
+    return 'http://localhost:8090'
+  },
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  maxAge: 5,
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'DELETE'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept']
+}))
+
 app.use(async (ctx, next) => {
   ctx.userInfo = {}
   if (ctx.cookies.get('userInfo')) {
