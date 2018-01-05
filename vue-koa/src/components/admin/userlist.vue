@@ -14,6 +14,7 @@
             <el-button type="primary">新增</el-button>
           </el-col>
         </el-row>
+        <span v-for="item in Object.values(testNext)" :key="item.id">{{item}}</span>
       </div>
       <div class="table">
         <el-table
@@ -103,7 +104,8 @@ export default {
       pageSize: 8,
       currentPage: 1,
       showEdit: false,
-      editData: {}
+      editData: {},
+      testNext: {a: 1}
     }
   },
   created () {
@@ -116,6 +118,9 @@ export default {
       .catch(err => {
         console.log(err)
       })
+  },
+  mounted () {
+    // this.$set(this.data, 'testNext', '133')
   },
   computed: {
     tableData () {
@@ -151,6 +156,14 @@ export default {
     search () {
       let time = Mock.mock('@now')
       console.log(time)
+      // this.testNext = Object.assign({}, this.testNext, {b: 45})
+      this.$set(this.testNext, 'b', ' -- 466')
+      // console.log(this.testNext)
+      // console.log(this.$refs.test.textContent)
+      // this.$nextTick(item => {
+      //   console.log(item)
+      //   console.log(this.$refs.test.textContent)
+      // })
     }
   },
   components: {

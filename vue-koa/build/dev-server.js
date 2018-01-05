@@ -11,6 +11,7 @@ var express = require('express')
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = require('./webpack.dev.conf')
+var http = require('http')
 
 // default port where dev server listens for incoming traffic
 var port = process.env.PORT || config.dev.port
@@ -79,6 +80,61 @@ devMiddleware.waitUntilValid(() => {
   }
   _resolve()
 })
+
+/**
+ * created by leeing on 10/11
+ */
+var apiRouter = express.Router()
+var data = require('../music-data.json')
+console.log(data)
+
+apiRouter.get('/music-data', (req, res) => {
+  res.json({
+    errno: 0,
+    musicData: data.musicData
+  })
+})
+
+// 音乐搜索
+apiRouter.get('/search/:num/:name', (req, res) => {
+  let num = req.params.num
+  let name = req.params.name
+  function search (n, keywords) {
+    return new Promise((resolve, reject) => {
+      let ret = ''
+      let url = encodeURI('http://s.music.qq.com/fcgi-bin/music_search_new_platform?t=0&n=' + n + '&aggr=1&cr=1&loginUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=jqminiframe.json&needNewCode=0&p=1&catZhida=0&remoteplace=sizer.newclient.next_song&w=' + keywords)
+      http.get(url, res => {
+        res.on('data', data => {
+          ret += data
+        })
+        res.on('end', () => {
+          resolve(ret)
+        })
+        res.on('error', err => {
+          reject(err)
+        })
+      })
+    })
+  }
+  search(num, name).then(data => {
+    res.json(JSON.parse(data))
+  })
+})
+
+// 获取热门歌手
+apiRouter.get('/hot', (req, res) => {
+  let hotKeywords = ['歌手', '张杰', '赵雷', '李健', '林志炫', '张碧晨', '梁博', '周笔畅', '张靓颖', '陈奕迅', '周杰伦', '王力宏', 'TFBoys', '李玉刚', '魏晨', '薛之谦']
+  let hotArr = new Array(6)
+  for (let i = 0; i < hotArr.length; i++) {
+    let length = hotKeywords.length
+    let random = Math.floor(Math.random() * length)
+    hotArr[i] = hotKeywords[random]
+    hotKeywords.splice(random, )
+  }
+  res.json(hotArr)
+})
+
+app.use('/appi', apiRouter)
 
 var server = app.listen(port)
 

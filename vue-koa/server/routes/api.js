@@ -15,5 +15,7 @@ router.post('/editArtical', api.editArtical)
 router.post('/addNewArtical', api.addNewArtical)
 // 获取文章分类
 router.get('/getCategory', api.getCategory)
+// 查询音乐
+router.get('/searchMusic', api.searchMusic)
 
 module.exports = router
