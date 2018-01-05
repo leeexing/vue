@@ -13,8 +13,11 @@ import OneIndex from '@/components/admin/One/one'
 import OneEssay from '@/components/admin/One/essay'
 import OneMusic from '@/components/admin/One/music'
 import Music from '@/components/admin/Music/music'
+import NstsTrain from '@/components/admin/Music/nsts'
+import About from '@/components/admin/About/about'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
+import NSTS from '@/components/nsts/nsts-index'
 
 Vue.use(Router)
 
@@ -27,18 +30,13 @@ let router = new Router({
       component: Login
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
       path: '/todolist',
       name: 'Todolist',
       component: TodoList
     },
     {
       path: '/index',
-      name: 'Index',
+      // name: 'index', //要有默认子路由，那父路由的名字name得去掉
       component: index,
       children: [
         {
@@ -50,7 +48,7 @@ let router = new Router({
     },
     {
       path: '/myadmin',
-      name: 'Admin',
+      // name: 'Admin',
       component: Admin,
       children: [
         {
@@ -102,8 +100,22 @@ let router = new Router({
           path: '/myadmin/music',
           name: '音乐-Music',
           component: Music
+        },
+        {
+          path: '/myadmin/nsts',
+          name: '培训-课件',
+          component: NstsTrain
+        },
+        {
+          path: '/myadmin/about',
+          name: '有关于我',
+          component: About
         }
       ]
+    },
+    {
+      path: '/nsts',
+      component: NSTS
     }
   ]
 })
