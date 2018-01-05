@@ -24,10 +24,15 @@
             <el-menu-item index="/myadmin/map">地图应用</el-menu-item>
             <el-menu-item index="/myadmin/one">One (一个)</el-menu-item>
             <el-menu-item index="/myadmin/music">Music (网易)</el-menu-item>
+            <el-menu-item index="/myadmin/nsts">NSTS (培训)</el-menu-item>
           </el-submenu>
           <el-menu-item index="/myadmin/setting">
             <i class="el-icon-setting"></i>
             <span slot="title">设置</span>
+          </el-menu-item>
+          <el-menu-item index="/myadmin/about">
+            <i class="el-icon-setting"></i>
+            <span slot="title">关于</span>
           </el-menu-item>
         </el-menu>
       </el-col>

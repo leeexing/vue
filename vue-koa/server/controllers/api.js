@@ -2,6 +2,7 @@ const User = require('../models/User')
 const Content = require('../models/Content')
 const Category = require('../models/Category')
 const _ = require('lodash')
+const http = require('http')
 
 // 获取用户列表
 async function getUserList (ctx) {
@@ -99,8 +100,34 @@ async function getCategory (ctx) {
 }
 
 // 跨域获取音乐数据
-async function getMusic (ctx) {
-  //
+async function searchMusic (ctx) {
+  let queryData = ctx.query
+  console.log(queryData)
+  let num = queryData.num
+  let name = queryData.name
+  let data = await getMusic(num, name)
+  ctx.body = {
+    success: true,
+    message: data
+  }
+}
+function getMusic (n, keywords) {
+  return new Promise((resolve, reject) => {
+    let results = ''
+    let url = encodeURI('http://s.music.qq.com/fcgi-bin/music_search_new_platform?t=0&n=' + n + '&aggr=1&cr=1&loginUin=0&format=json&inCharset=GB2312&outCharset=utf-8&notice=0&platform=jqminiframe.json&needNewCode=0&p=1&catZhida=0&remoteplace=sizer.newclient.next_song&w=' + keywords)
+    console.log(url)
+    http.get(url, res => {
+      res.on('data', data => {
+        results += data
+      })
+      res.on('end', () => {
+        resolve(JSON.parse(results))
+      })
+      res.on('error', err => {
+        reject(err)
+      })
+    })
+  })
 }
 
 module.exports = {
@@ -109,5 +136,5 @@ module.exports = {
   editArtical,
   addNewArtical,
   getCategory,
-  getMusic
+  searchMusic
 }

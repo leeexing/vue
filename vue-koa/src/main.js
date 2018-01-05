@@ -6,8 +6,11 @@ import router from './router'
 // import router from './router/router'
 
 import store from './store/index'
+// Vue全局使用 布局模块
 import ElementUI from 'element-ui'
-Vue.use(ElementUI) // Vue全局使用
+Vue.use(ElementUI)
+// 图标
+import 'font-awesome/css/font-awesome.css'
 
 import axios from 'axios'
 Vue.prototype.$http = axios // Vue.use(axios) // 没有官方文档要求需要这么使用，这么使用会报错 protocol

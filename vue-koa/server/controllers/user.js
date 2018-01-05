@@ -20,7 +20,8 @@ async function getUserInfo (ctx, next) {
 async function postUserAuth (ctx, next) {
   let data = ctx.request.body // post过来的数据存在request.body里面
   let userInfo = await getUserById(data.username)
-
+  // console.log(data)
+  // console.log(userInfo)
   if (userInfo !== null) {
     if (!bcrypt.compareSync(data.password, userInfo.password)) { // 第一个参数必须是用户输入的数据
       ctx.body = {

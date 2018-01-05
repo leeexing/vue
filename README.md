@@ -1,13 +1,16 @@
 ## Vue 学习之路
-	包含自己的一些心得和闲暇时间写的demos
+
+	  包含自己的一些心得和闲暇时间写的demos
 
 ## 好好学习天天向上
-	如何利用好 git，以及熟练使用git 操作
+
+	  如何利用好 git，以及熟练使用git 操作
+    这个在python里面建立了一个 git.md 的文件，记录一般常用的 git 指令，以及当时的一些困惑
 
 ## git使用心得
 
 * .gitignore 文件本身就可以帮我们忽略掉一些文件（夹），例如：module
-* git push origin fenzhi 也会将主分支的代码也提交了？| 看来还需要多了解
+* git push origin fenzhi 也会将主分支的代码也提交了？| 看来还需要多了解 | 原来是自己的一个新的目录下push的，git会默认将之前的master文件修改过来
 
 ## 目录
 
