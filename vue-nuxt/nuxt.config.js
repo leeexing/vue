@@ -33,6 +33,27 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
-  }
+    },
+    vendor: ['vue-beauty']
+  },
+  vender:[
+    'vue-beauty'
+  ],
+  babel: {
+    "plugins": [["component", [
+      {
+        "libraryName": "vue-beauty",
+        "styleLibraryName": "theme-default"
+      },
+      'transform-async-to-generator',
+      'transform-runtime'
+    ]]],
+    comments: true
+  },
+  plugins: [
+    { src: '~plugins/beauty-ui', ssr: true}
+  ],
+  css: [
+    'vue-beauty/package/style/vue-beauty.min.css'
+  ]
 }

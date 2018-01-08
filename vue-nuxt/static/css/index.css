@@ -1,0 +1,30 @@
+.btn,
+#go {
+  margin-top: 10px;
+}
+.danger,
+#go {
+  background: #f00;
+}
+.foo {
+  color: #222;
+}
+.foo .aa,
+.foo .bb {
+  margin-top: 10px;
+}
+.cc .foo .aa {
+  transform: scale(1.1);
+}
+.foo .bb {
+  font-size: 24px;
+}
+.foo .bb span {
+  padding-top: 15px;
+}
+.goback {
+  margin-top: 10px;
+}
+foot {
+  padding: 10px;
+}
