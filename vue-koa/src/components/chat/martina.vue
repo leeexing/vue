@@ -110,7 +110,6 @@ export default {
     flex:1;
     display: flex;
     flex-direction: column;
-    padding-top: 5px;
     background: url('/static/images/universe.jpg') no-repeat;
     background-position: 0 60px;
     background-size: cover;
@@ -118,6 +117,7 @@ export default {
       display: flex;
       align-items: center;
       height: 60px;
+      flex-shrink: 0;
       padding: 10px;
       color: #f56c6c;
       h3 {
@@ -128,6 +128,7 @@ export default {
     }
     .content {
       flex: 1;
+      padding-top: 5px;
       padding-bottom: 60px;
       overflow-y: auto;
       overflow-x: hidden;
