@@ -2,7 +2,7 @@
   <div class="m-chat">
     <section class="warpper">
       <header>
-        <h3>火星人请求地球支援</h3>
+        <h3>火星人请求地球支援.git</h3>
       </header>
       <div class="content" ref='msgContent'>
         <div v-for="(item, index) in msgList" :key="item.id">
