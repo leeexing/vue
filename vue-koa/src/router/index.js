@@ -18,6 +18,7 @@ import About from '@/components/admin/About/about'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
 import NSTS from '@/components/nsts/nsts-index'
+import Martina from '@/components/chat/martina'
 
 Vue.use(Router)
 
@@ -26,6 +27,11 @@ let router = new Router({
   routes: [
     {
       path: '/',
+      name: 'index',
+      component: Login
+    },
+    {
+      path: '/login',
       name: 'Login',
       component: Login
     },
@@ -105,6 +111,11 @@ let router = new Router({
           path: '/myadmin/nsts',
           name: '培训-课件',
           component: NstsTrain
+        },
+        {
+          path: '/myadmin/martina',
+          name: '培训-聊天',
+          component: Martina
         },
         {
           path: '/myadmin/about',

@@ -1,14 +1,14 @@
 .nsts {
   flex: 1;
 }
-header {
+.nsts header {
   display: flex;
   align-items: center;
   height: 60px;
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
-header .course-name {
+.nsts header .course-name {
   margin-left: 10px;
   color: #f90;
 }

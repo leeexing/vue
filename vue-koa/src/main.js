@@ -12,8 +12,15 @@ Vue.use(ElementUI)
 // 图标
 import 'font-awesome/css/font-awesome.css'
 
+/**
+ * 第三方库
+ */
+// 1、axios
 import axios from 'axios'
 Vue.prototype.$http = axios // Vue.use(axios) // 没有官方文档要求需要这么使用，这么使用会报错 protocol
+// 2、moment
+import Moment from 'moment'
+Object.defineProperty(Vue.prototype, '$moment', {value: Moment}) // 很喜欢这种‘优雅’的扩展方式
 
 import 'element-ui/lib/theme-default/index.css' // 地图
 import VueAMap from 'vue-amap'

@@ -4,11 +4,12 @@
       <el-menu-item class="userlogo" index="1"><img src="../../assets/logo.png" alt=""></el-menu-item>
       <el-menu-item class="userlogo" index="2">美丽の女神</el-menu-item>
       <!-- <el-menu-item index="2"><a href="#" target="_blank">不知道今天星期几</a></el-menu-item> -->
-      <el-submenu class="logout" index="3">
+      <el-submenu class="logout" index="4">
         <template slot="title">蒙面侠</template>
         <el-menu-item index="3-1"><a href="/login">退出</a></el-menu-item>
-        <el-menu-item index="3-2"><a href="/index">我的博客</a></el-menu-item>
-        <el-menu-item index="3-3">其他</el-menu-item>
+        <el-menu-item index="3-2"><a href="/index">首页</a></el-menu-item>
+        <el-menu-item index="3-3"><a href="http://www.leeeing.com" target="_blank">我的博客</a></el-menu-item>
+        <el-menu-item index="3-4">其他</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>
@@ -51,6 +52,13 @@ export default {
       min-width: 100%;
     }
     
+  }
+}
+.el-menu-item {
+  a {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

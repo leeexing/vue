@@ -26,6 +26,11 @@
             <el-menu-item index="/myadmin/music">Music (网易)</el-menu-item>
             <el-menu-item index="/myadmin/nsts">NSTS (培训)</el-menu-item>
           </el-submenu>
+          <el-submenu index="5">
+            <template slot="title"><i class="el-icon-star-off"></i><span slot="title">智能聊天</span></template>
+            <el-menu-item index="/myadmin/martina">火星人</el-menu-item>
+            <el-menu-item index="/myadmin/earth">拯救者</el-menu-item>
+          </el-submenu>
           <el-menu-item index="/myadmin/setting">
             <i class="el-icon-setting"></i>
             <span slot="title">设置</span>
