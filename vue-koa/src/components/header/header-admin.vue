@@ -1,11 +1,15 @@
 <template>
   <div class="admin-header">
-    <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+      background-color="#545c64"
+      text-color="#fff"
+      active-text-color="#ffd04b"
+    >
       <el-menu-item class="userlogo" index="1"><img src="../../assets/logo.png" alt=""></el-menu-item>
       <el-menu-item class="userlogo" index="2">美丽の女神</el-menu-item>
       <!-- <el-menu-item index="2"><a href="#" target="_blank">不知道今天星期几</a></el-menu-item> -->
       <el-submenu class="logout" index="4">
-        <template slot="title">蒙面侠</template>
+        <template slot="title">리 아성</template>
         <el-menu-item index="3-1"><a href="/login">退出</a></el-menu-item>
         <el-menu-item index="3-2"><a href="/index">首页</a></el-menu-item>
         <el-menu-item index="3-3"><a href="http://www.leeeing.com" target="_blank">我的博客</a></el-menu-item>

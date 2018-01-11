@@ -56,7 +56,7 @@ app.on('error', (err, next) => {
 
 // mock 火星数据
 const Mock = require('mockjs')
-let Random = Mock.Random
+// let Random = Mock.Random
 
 // websocket
 const wss = new WebSocket.Server({port: 8080})
@@ -69,9 +69,11 @@ wss.on('connection', ws => {
     }
     let n = Math.ceil(Math.random() * 3)
     console.log(n)
-    let help = Random.cparagraph(n)
+    let help = Mock.mock({
+      'msgs|3': ['@ctitle(10, 20)', '@name', '@title(10, 20)', '@time', '@sentence', '@email']
+    })
     setTimeout(() => {
-      ws.send(help)
+      ws.send(help.msgs[Math.ceil(Math.random()*18)])
     }, n*1000)
   })
 

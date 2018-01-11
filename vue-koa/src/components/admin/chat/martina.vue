@@ -2,7 +2,13 @@
   <div class="m-chat">
     <section class="warpper">
       <header>
-        <h3>火星人请求地球支援.git</h3>
+        <h3 @click="show">火星人请求地球支援.git</h3>
+        <dialog ref="dialog">
+          <h3>我是来之火星的dialog</h3>
+          <p>先的特性你可以尝试：show | close | showModal</p>
+
+          <el-button type="success" @click="closeDialog">有惊喜</el-button>
+        </dialog>
       </header>
       <div class="content" ref='msgContent'>
         <div v-for="(item, index) in msgList" :key="item.id">
@@ -21,7 +27,7 @@
     <footer>
       <el-input
         type="textarea"
-        :rows="1"
+        autosize
         placeholder="请输入内容"
         @keyup.enter.native="sendMessage"
         v-model="textarea">
@@ -32,10 +38,22 @@
 </template>
 
 <script>
+// import Mock from 'mockjs'
+
+// const data = Mock.mock({
+//   'topics|3': ['@ctitle(10, 20)', '@name', '@title(10, 20)', '@time', '@sentence'
+//     // {
+//     //   'title': '@ctitle(10, 20)',
+//     //   'name': '@name'
+//     // }
+//   ]
+// })
+// console.log(data)
 export default {
   name: 'chat',
   data () {
     return {
+      count: 1,
       textarea: '',
       msgList: [
         // {
@@ -87,7 +105,17 @@ export default {
       }
     },
     show () {
-      return false
+      if (this.count % 3 === 1) {
+        this.$refs.dialog.show()
+      } else if (this.count % 3 === 2) {
+        this.$refs.dialog.close()
+      } else {
+        this.$refs.dialog.showModal()
+      }
+      this.count++
+    },
+    closeDialog () {
+      this.$refs.dialog.close()
     },
     scroll () {
       let height = this.$refs.msgContent.offsetHeight
@@ -106,6 +134,9 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
+  dialog {
+    border-radius: 5px;
+  }
   section {
     flex:1;
     display: flex;
@@ -166,6 +197,9 @@ export default {
           }
         }
         &.martina {
+          .avatar {
+            background-image: url('/static/images/martina.jpg');
+          }
           .msg {
             &::before {
               position: absolute;

@@ -5,7 +5,11 @@
     </div> -->
     <el-row class="tac">
       <el-col :span="24">
-        <el-menu theme="dark" :default-active="$route.path" class="el-menu-vertical-demo" :collapse="collapseSideNav" router>
+        <el-menu theme="dark" :default-active="$route.path" class="el-menu-vertical-demo"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+          :collapse="collapseSideNav" router>
           <el-menu-item index="/myadmin">
             <i class="el-icon-date"></i>
             <span slot="title">首页</span>
@@ -29,7 +33,7 @@
           <el-submenu index="5">
             <template slot="title"><i class="el-icon-star-off"></i><span slot="title">智能聊天</span></template>
             <el-menu-item index="/myadmin/martina">火星人</el-menu-item>
-            <el-menu-item index="/myadmin/earth">拯救者</el-menu-item>
+            <el-menu-item index="/myadmin/webgl">拯救者</el-menu-item>
           </el-submenu>
           <el-menu-item index="/myadmin/setting">
             <i class="el-icon-setting"></i>

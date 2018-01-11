@@ -4,11 +4,13 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 // import router from './router/router'
-
 import store from './store/index'
-// Vue全局使用 布局模块
+
+// Vue全局使用 Element-UI 布局模块
 import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-default/index.css'
 Vue.use(ElementUI)
+
 // 图标
 import 'font-awesome/css/font-awesome.css'
 
@@ -21,8 +23,7 @@ Vue.prototype.$http = axios // Vue.use(axios) // 没有官方文档要求需要�
 // 2、moment
 import Moment from 'moment'
 Object.defineProperty(Vue.prototype, '$moment', {value: Moment}) // 很喜欢这种‘优雅’的扩展方式
-
-import 'element-ui/lib/theme-default/index.css' // 地图
+// 高德地图
 import VueAMap from 'vue-amap'
 Vue.use(VueAMap)
 VueAMap.initAMapApiLoader({

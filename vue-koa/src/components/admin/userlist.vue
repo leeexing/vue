@@ -34,7 +34,7 @@
             sortable
             prop='_id'
             width="280">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span style="margin-left: 10px">{{ scope.row._id }}</span>
             </template>
           </el-table-column>
@@ -43,26 +43,26 @@
             sortable
             prop='username'
             width="180">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span style="margin-left: 10px">{{ scope.row.username }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="密码"
             width="180">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span>{{ scope.row.password }}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="是否是管理员"
             width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span>{{ scope.row.isAdmin ? '是' : '否' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button
                 size="small"
                 @click="handleEdit(scope.$index, scope.row)">编辑</el-button>

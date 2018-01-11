@@ -31,7 +31,7 @@
           <el-table-column
             label="创建日期"
             width="180">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-icon name="time"></el-icon>
               <span style="margin-left: 10px">{{ scope.row.addTime.split('T')[0] }}</span>
             </template>
@@ -39,25 +39,25 @@
           <el-table-column
             label="标题"
             width="180">
-            <template scope="scope">
+            <template slot-scope="scope">
               {{scope.row.title}}
             </template>
           </el-table-column>
           <el-table-column
             label="内容简介">
-            <template scope="scope">
+            <template slot-scope="scope">
               {{scope.row.brife}}
             </template>
           </el-table-column>
           <el-table-column
             label="阅读次数"
             width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               {{scope.row.views}}
             </template>
           </el-table-column>
           <el-table-column label="操作" width="180">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button
                 size="small"
                 @click="handleEdit(scope.$index, scope.row)">编辑</el-button>

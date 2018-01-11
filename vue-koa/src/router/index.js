@@ -18,7 +18,8 @@ import About from '@/components/admin/About/about'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
 import NSTS from '@/components/nsts/nsts-index'
-import Martina from '@/components/chat/martina'
+import Martina from '@/components/admin/chat/martina'
+import Webgl from '@/components/admin/chat/webgl'
 
 Vue.use(Router)
 
@@ -116,6 +117,11 @@ let router = new Router({
           path: '/myadmin/martina',
           name: '培训-聊天',
           component: Martina
+        },
+        {
+          path: '/myadmin/webgl',
+          name: 'webgl试验田',
+          component: Webgl
         },
         {
           path: '/myadmin/about',
