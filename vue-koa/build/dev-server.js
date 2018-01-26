@@ -129,7 +129,7 @@ apiRouter.get('/hot', (req, res) => {
     let length = hotKeywords.length
     let random = Math.floor(Math.random() * length)
     hotArr[i] = hotKeywords[random]
-    hotKeywords.splice(random, )
+    hotKeywords.splice(random, 1)
   }
   res.json(hotArr)
 })

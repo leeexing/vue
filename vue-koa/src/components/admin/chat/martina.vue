@@ -10,7 +10,7 @@
           <el-button type="success" @click="closeDialog">有惊喜</el-button>
         </dialog>
       </header>
-      <div class="content" ref='msgContent'>
+      <div class="chat-content" ref='msgContent'>
         <div v-for="(item, index) in msgList" :key="item.id">
           <div v-if="index % 3 === 0" class="time">
             <time>{{item.time}}</time>
@@ -123,6 +123,12 @@ export default {
       if (scrollHeight > height) {
         this.$refs.msgContent.scrollTop = scrollHeight - height
       }
+    },
+    /**
+     * 自定义指令
+     */
+    onscroll () {
+
     }
   }
 }
@@ -157,7 +163,7 @@ export default {
         text-shadow: 1px 1px rgba(197, 223, 248,0.8),2px 2px rgba(197, 223, 248,0.8),3px 3px rgba(197, 223, 248,0.8),4px 4px rgba(197, 223, 248,0.8),5px 5px rgba(197, 223, 248,0.8),6px 6px rgba(197, 223, 248,0.8);
       }
     }
-    .content {
+    .chat-content {
       flex: 1;
       padding-top: 5px;
       padding-bottom: 60px;
@@ -231,6 +237,7 @@ export default {
   footer{
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     height: 60px;
     padding: 0 12px;
     border-top: 1px solid #888;

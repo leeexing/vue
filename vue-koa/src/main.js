@@ -8,8 +8,12 @@ import store from './store/index'
 
 // Vue全局使用 Element-UI 布局模块
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
+import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
+
+// 引用新浪表情包
+import VueSinaEmotion from 'vue-sina-emotion'
+Vue.use('vue-sina-emotion', VueSinaEmotion)
 
 // 图标
 import 'font-awesome/css/font-awesome.css'

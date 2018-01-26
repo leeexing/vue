@@ -6,7 +6,7 @@
             (item.f.split('|')[3]&&strDecode(item.f.split('|')[3].replace(/amp\;/g, '')).replace(/\;/g, '/') || '佚名')+' - '+strDecode(item.fsong), 
             item.f.split('|')[0],
             item.f.split('|')[4]&&'http://imgcache.qq.com/music/photo/album_300/'+item.f.split('|')[4]%100+'/300_albumpic_'+item.f.split('|')[4]+'_0.jpg')">
-        <div class="icon-music">
+        <div class="music-icon">
           <img :src="item.f.split('|')[4]&&'http://imgcache.qq.com/music/photo/album_300/'+item.f.split('|')[4]%100+'/300_albumpic_'+item.f.split('|')[4]+'_0.jpg'" alt="microzz.com">
         </div>
         <div class="music-info">
@@ -201,7 +201,7 @@ export default {
   padding-top: 5px;
   border-bottom: 1px solid #ddd;
   overflow: hidden;
-  .icon-music {
+  .music-icon {
     float: left;
     width: 100px;
     padding: 10px;

@@ -14,7 +14,6 @@
             <el-button type="primary">新增</el-button>
           </el-col>
         </el-row>
-        <span v-for="item in Object.values(testNext)" :key="item.id">{{item}}</span>
       </div>
       <div class="table">
         <el-table
