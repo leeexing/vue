@@ -23,7 +23,7 @@
           </div></el-col>
           <el-col :span="8"><div class="grid-content bg-purple">
             多选
-            <el-select v-model="value2" 
+            <el-select v-model="value2"
               multiple style="margin-left: 20px;" placeholder="请选择"
               @change="multipleChange"
             >
@@ -198,7 +198,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$el)
+    // console.log(this.$el)
   },
   mounted () {
     // $el: 就是 这个组件，指带的就是这个组件的根元素包含的内容 div.m-webgl

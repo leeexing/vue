@@ -1,0 +1,206 @@
+
+@font-face {font-family: "nucfont";
+  src: url('../fonts/iconfont.eot?t=1497320233130'); /* IE9*/
+  src: url('../fonts/iconfont.eot?t=1497320233130#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../fonts/iconfont.woff?t=1497320233130') format('woff'), /* chrome, firefox */
+  url('../fonts/iconfont.ttf?t=1497320233130') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../fonts/iconfont.svg?t=1497320233130#nucfont') format('svg'); /* iOS 4.1- */
+}
+
+.nucfont {
+  font-family:"nucfont" !important;
+  font-size:16px;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.inuc-2x {
+  font-size: 2em;
+}
+
+.inuc-fw {
+  width: 1.28571429em;
+  text-align: center;
+}
+
+.inuc-minus:before { content: "\e6f2" !important; }
+/*修改图标库时，替换下面的代码↓↓↓*/
+
+.inuc-download3:before { content: "\e610"; }
+
+.inuc-book:before { content: "\e600"; }
+
+.inuc-close:before { content: "\e6fd"; }
+
+.inuc-password:before { content: "\e60c"; }
+
+.inuc-print:before { content: "\e728"; }
+
+.inuc-userface:before { content: "\e72e"; }
+
+.inuc-tupianku:before { content: "\e608"; }
+
+.inuc-write:before { content: "\e631"; }
+
+.inuc-difficult:before { content: "\e611"; }
+
+.inuc-checkbox-checked:before { content: "\e67e"; }
+
+.inuc-checkbox:before { content: "\e63e"; }
+
+.inuc-rank:before { content: "\e6e7"; }
+
+.inuc-keytopic:before { content: "\e60d"; }
+
+.inuc-image:before { content: "\e66e"; }
+
+.inuc-jilu:before { content: "\e604"; }
+
+.inuc-bars:before { content: "\e60b"; }
+
+.inuc-check:before { content: "\e609"; }
+
+.inuc-clock-o:before { content: "\e60a"; }
+
+.inuc-angle-double-down:before { content: "\e642"; }
+
+.inuc-angle-double-up:before { content: "\e643"; }
+
+.inuc-angle-left:before { content: "\e640"; }
+
+.inuc-angle-right:before { content: "\e641"; }
+
+.inuc-arrow-circle-left:before { content: "\e644"; }
+
+.inuc-arrow-circle-right:before { content: "\e63f"; }
+
+.inuc-caret-down:before { content: "\e64e"; }
+
+.inuc-cog:before { content: "\e65b"; }
+
+.inuc-file-image-o:before { content: "\e679"; }
+
+.inuc-folder-open:before { content: "\e682"; }
+
+.inuc-folder:before { content: "\e683"; }
+
+.inuc-info-circle:before { content: "\e6b6"; }
+
+.inuc-plus-square:before { content: "\e6e2"; }
+
+.inuc-sign-out:before { content: "\e6fb"; }
+
+.inuc-spinner:before { content: "\e705"; }
+
+.inuc-close-circle-o:before { content: "\e71f"; }
+
+.inuc-download2:before { content: "\e615"; }
+
+.inuc-clock:before { content: "\e6fe"; }
+
+.inuc-reset-pwd:before { content: "\e647"; }
+
+.inuc-empty-file:before { content: "\e614"; }
+
+.inuc-import2:before { content: "\e60e"; }
+
+.inuc-import3:before { content: "\e60f"; }
+
+.inuc-minus:before { content: "\e6f2"; }
+
+.inuc-order:before { content: "\e62b"; }
+
+.inuc-exclamation-circle:before { content: "\e605"; }
+
+.inuc-publish:before { content: "\e617"; }
+
+.inuc-menu-manage:before { content: "\e618"; }
+
+.inuc-edit:before { content: "\e619"; }
+
+.inuc-little-arrow-left:before { content: "\e61a"; }
+
+.inuc-little-arrow-right:before { content: "\e61b"; }
+
+.inuc-arrow-right:before { content: "\e61c"; }
+
+.inuc-clothes:before { content: "\e61d"; }
+
+.inuc-group:before { content: "\e61e"; }
+
+.inuc-delete:before { content: "\e61f"; }
+
+.inuc-person:before { content: "\e620"; }
+
+.inuc-add-circle:before { content: "\e621"; }
+
+.inuc-add:before { content: "\e622"; }
+
+.inuc-upload:before { content: "\e623"; }
+
+.inuc-preview:before { content: "\e624"; }
+
+.inuc-count:before { content: "\e625"; }
+
+.inuc-star:before { content: "\e626"; }
+
+.inuc-degree:before { content: "\e627"; }
+
+.inuc-operation:before { content: "\e628"; }
+
+.inuc-arrow-left:before { content: "\e629"; }
+
+.inuc-download:before { content: "\e62a"; }
+
+.inuc-theory:before { content: "\e602"; }
+
+.inuc-picture-add:before { content: "\e601"; }
+
+.inuc-import:before { content: "\e603"; }
+
+.inuc-statistic:before { content: "\e606"; }
+
+.inuc-export:before { content: "\e607"; }
+
+.inuc-view-courseware:before { content: "\e645"; }
+
+.inuc-check-paper:before { content: "\e646"; }
+
+.inuc-shitulianxi:before { content: "\e62c"; }
+
+.inuc-gerendangan:before { content: "\e62d"; }
+
+.inuc-peixunrenwu:before { content: "\e62e"; }
+
+.inuc-kaoshijilu:before { content: "\e62f"; }
+
+.inuc-lilunlianxi:before { content: "\e630"; }
+
+.inuc-lianxijilu:before { content: "\e632"; }
+
+.inuc-shituxuexi:before { content: "\e633"; }
+
+.inuc-zhengshuguanli:before { content: "\e634"; }
+
+.inuc-xitongguanli:before { content: "\e636"; }
+
+.inuc-kaoshiguanli:before { content: "\e637"; }
+
+.inuc-tongjiguanli:before { content: "\e638"; }
+
+.inuc-tukuguanli:before { content: "\e639"; }
+
+.inuc-peixunguanli:before { content: "\e63a"; }
+
+.inuc-kejianguanli:before { content: "\e63b"; }
+
+.inuc-wodekongjian:before { content: "\e63c"; }
+
+.inuc-ziyuanguanli:before { content: "\e63d"; }
+
+.inuc-cuotilianxi:before { content: "\e635"; }
+
+.inuc-climb:before { content: "\ea79"; }
+
+.inuc-shot-arrow:before { content: "\ea7d"; }

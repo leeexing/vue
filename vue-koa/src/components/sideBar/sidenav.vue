@@ -5,11 +5,13 @@
     </div> -->
     <el-row class="tac">
       <el-col :span="24">
-        <el-menu theme="dark" :default-active="$route.path" class="el-menu-vertical-demo"
-            background-color="#545c64"
-            text-color="#fff"
-            active-text-color="#ffd04b"
-          :collapse="collapseSideNav" router>
+        <el-menu :default-active="$route.path" class="el-menu-vertical-demo"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+          :collapse="collapseSideNav"
+          router
+        >
           <el-menu-item index="/myadmin">
             <i class="el-icon-date"></i>
             <span slot="title">首页</span>
@@ -34,6 +36,7 @@
             <template slot="title"><i class="el-icon-star-off"></i><span slot="title">智能聊天</span></template>
             <el-menu-item index="/myadmin/martina">火星人</el-menu-item>
             <el-menu-item index="/myadmin/webgl">拯救者</el-menu-item>
+            <el-menu-item index="/myadmin/dr">DR</el-menu-item>
           </el-submenu>
           <el-menu-item index="/myadmin/setting">
             <i class="el-icon-setting"></i>
@@ -69,7 +72,7 @@ export default {
 <style lang="less">
 #sidenav {
   position: relative;
-  border-top: 1px solid #f90;
+  border-top: 1px solid #222;
   .tac, .el-col, .el-menu{
     height: 100%;
   }

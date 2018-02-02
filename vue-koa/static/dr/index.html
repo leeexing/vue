@@ -1,0 +1,137 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nuctech DR Viewer</title>
+
+	<link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="./css/the-Icons/css/iconfont.css">
+    <link rel="stylesheet" href="./css/drModle.css" />
+
+    <script src="./js/jquery-2.2.3.min.js"></script>
+    <script src="./js/nsts.cookieHelp.js"></script>
+    <script src="./js/nsts.base.js"></script>
+    <script src="./js/nsts.plugin.js"></script>
+
+    <script src="./js/wgl/three.min.js"></script>
+    <script src="./js/wgl/Detector.js"></script>
+    <script src="./js/wgl/stats.min.js"></script>
+    <script src="./js/wgl/OrbitControls.js"></script>
+    <script src="./js/wgl/TrackballControls.js"></script>
+    <script src="./js/wgl/dat.gui.min.js"></script>
+    <script src="./js/wgl/module3d.volume.js"></script>
+    <script src="./js/wgl/Module3D.js"></script>
+    <script src="./js/wgl/ModuleEncrypted.js"></script>
+    <script src="./js/wgl/Module3D.DRInstanceEn.js"></script>
+    <script src="./js/wgl/Module3D.Event.js"></script>
+    <script src="./js/wgl/ThreeBSP.js"></script>
+
+    <script src="./js/sqllite.js"></script>
+    <script src="./js/training/nsts.training.viewers.js"></script>
+    <script src="./js/training/nsts.training_dr.js"></script>
+    <script src="./js/nsts.plugin.ajax.js"></script>
+</head>
+<body>
+    <!--倒计时效果-->
+    <div id="loading">
+        <div class="clock">
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <!--头部，标题-->
+    <div class="m-header">
+        <p class="topic-title" id="lessontitle"></p>
+        <p class="operate-name j-cur-operate"><span>真彩色</span>+<span>突出显示嫌疑物</span></p>
+        <p class="exit"><a class="page-close" id="btclose" title="退出"></a></p>
+    </div>
+    <div class="main">
+        <div class="m-title">
+            <div class="text-info">
+                <div class="info-1">
+                    <p>图像名称：<span class="img-name">你的名字，世界的镜头</span></p>
+                    <p>知识点：<span class="img-kpoint">高级</span></p>
+                    <p>物品名称：<span class="goods-name">高级</span></p>
+                </div>
+                <p>图像描述：<span class="feature-desc">我说所有的酒 都不如你</span></p>
+            </div>
+            <div class="map-info j-header-info">
+                <a class="u-btn j-map">插入tip</a>
+            </div>
+        </div>
+        <div class="map-menu"></div>
+        <div class="m-oprate">
+            <div class="btn-wrap f-fixl j-prevbtn">
+                <a class="btn btn-prev"></a>
+            </div>
+            <div class="btn-wrap f-fixr j-nextbtn">
+                <a class="btn btn-next"></a>
+                <div class="btn-wrap-1 j-judge-btns">
+                    <a class="btn-1 btn-pass j-pass" data-ispass="true"></a>
+                    <a class="btn-1 btn-nopass j-nopass" data-ispass="false"></a>
+                    <a class="btn-2 btn-submit j-submit">提交</a>
+                    <!--知识点选择-->
+                    <div class="kp-wrap j-kp-select">
+                        <a class="btn-kp active j-kp">知识点</a>
+                        <ul class="kp-list">
+                            <li class="title">知识点<i class="kp-close j-kp-close"></i></li>
+                            <li id="kplist">
+                                <a data-id="9">枪支、军用或警用械具类(含主要零部件)物品</a>
+                                <a data-id="10">爆炸物品类</a>
+                                <a data-id="11">管制刀具</a>
+                                <a data-id="12">易燃、易爆物品</a>
+                                <a data-id="13">剧毒物品</a>
+                                <a data-id="14">腐蚀性物品</a>
+                                <a data-id="15">放射性物品</a>
+                                <a data-id="16">其他危害飞行安全的物品</a>
+                                <a data-id="17">国家法律法规规定的其他禁止携带、运输的物品</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="m-content">
+            <div class="dr-canvas j-dr-container">
+                <div id="canvasdr"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-dr-footer">
+        <div class="dr-oprate">
+            <div class="oprate-left">
+                <div class="dr-angles">
+                    <a class="active">视角一</a>
+                    <a>视角二</a>
+                </div>
+                <div class="dr-amplify">
+                    <a><span class="j-dr-zoomindex">1.0</span> x</a>
+                </div>
+            </div>
+            <div class="oprate-right j-tools">
+                <div class="side-top">
+                    <!-- BW === gray 灰色-->
+                    <a class="dr-btn bw" data-group="c" data-index="0" data-defaultindex="1" data-tag="blackwhite" title="灰色显示"></a>
+                    <a class="dr-btn colours active" data-group="c" data-index="1" data-defaultindex="1" data-tag="default" title="真彩色"></a>
+                    <a class="dr-btn ms" data-group="c" data-index="2" data-defaultindex="1" data-tag="ms" title="无机物剔除"></a>
+                    <a class="dr-btn os" data-group="c" data-index="3" data-defaultindex="1" data-tag="os" title="有机物剔除"></a>
+                    <a class="dr-btn marktip active" data-group="d" data-index="2" data-defaultindex="-1" data-tag="" title="突出显示嫌疑物"></a>
+                </div>
+                <div class="side-down">
+                    <a class="dr-btn inverse" data-group="e" data-index="0" data-defaultindex="-1" data-tag="inverse" title="反色显示"></a>
+                    <!-- GEN === super 超级增强-->
+                    <a class="dr-btn gen" data-group="a" data-index="0" data-defaultindex="-1" data-tag="super" title="超级增强"></a>
+                    <div>
+                        <a class="dr-btn absor-minus" data-group="absor" data-absor="-5" title="可吸收率(-)"></a>
+                        <a class="dr-btn absor-plus" data-group="absor" data-absor="5" title="可吸收率(+)"></a>
+                    </div>
+                    <a class="dr-btn hi" data-group="b" data-index="0" data-defaultindex="-1" data-tag="superpenetrate" title="超级穿透"></a>
+                    <a class="dr-btn reset" data-group="f" data-index="6" data-defaultindex="-1" data-tag="" title="还原"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/lee/dr.js"></script>
+</body>
+</html>

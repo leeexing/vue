@@ -15,22 +15,19 @@ import OneMusic from '@/components/admin/One/music'
 import Music from '@/components/admin/Music/music'
 import NstsTrain from '@/components/admin/Music/nsts'
 import About from '@/components/admin/About/about'
+import Setting from '@/components/admin/setting'
 import index from '@/components/views/index'
 import Admin from '@/components/views/admin'
 import NSTS from '@/components/nsts/nsts-index'
 import Martina from '@/components/admin/chat/martina'
 import Webgl from '@/components/admin/chat/webgl'
+import DR from '@/components/admin/chat/dr'
 
 Vue.use(Router)
 
 let router = new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'index',
-      component: Login
-    },
     {
       path: '/login',
       name: 'Login',
@@ -64,67 +61,77 @@ let router = new Router({
           component: Home
         },
         {
-          path: '/myadmin/userlist',
+          path: 'userlist',
           name: 'userlist',
           component: Userlist
         },
         {
-          path: '/myadmin/artical',
+          path: 'artical',
           name: 'Artical',
           component: Artical
         },
         {
-          path: '/myadmin/category',
+          path: 'category',
           name: '文章分类',
           component: Category
         },
         {
-          path: '/myadmin/artical/addnew',
+          path: 'artical/addnew',
           name: '新增文章',
           component: AddNewArtical
         },
         {
-          path: '/myadmin/map',
+          path: 'map',
           name: '地图',
           component: AMap
         },
         {
-          path: '/myadmin/one',
+          path: 'one',
           name: '一个',
           component: OneIndex
         },
         {
-          path: '/myadmin/one/essay',
+          path: 'one/essay',
           name: '一个-文章',
           component: OneEssay
         },
         {
-          path: '/myadmin/one/music',
+          path: 'one/music',
           name: '一个-音乐',
           component: OneMusic
         },
         {
-          path: '/myadmin/music',
+          path: 'music',
           name: '音乐-Music',
           component: Music
         },
         {
-          path: '/myadmin/nsts',
+          path: 'nsts',
           name: '培训-课件',
           component: NstsTrain
         },
         {
-          path: '/myadmin/martina',
+          path: 'martina',
           name: '培训-聊天',
           component: Martina
         },
         {
-          path: '/myadmin/webgl',
+          path: 'webgl',
           name: 'webgl试验田',
           component: Webgl
         },
         {
-          path: '/myadmin/about',
+          path: 'dr',
+          name: 'DR图像',
+          component: DR
+        },
+        {
+          path: 'setting',
+          name: '相关设置',
+          component: Setting
+        },
+        {
+          path: 'about',
           name: '有关于我',
           component: About
         }

@@ -1,6 +1,7 @@
 <template>
   <div class="admin-header">
-    <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+    <el-menu
+      :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect"
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b"
@@ -21,7 +22,6 @@
 
 <script>
 export default {
-  name: 'header',
   data () {
     return {
       activeIndex: '1',
@@ -55,7 +55,7 @@ export default {
     .el-menu, .el-menu-item {
       min-width: 100%;
     }
-    
+
   }
 }
 .el-menu-item {

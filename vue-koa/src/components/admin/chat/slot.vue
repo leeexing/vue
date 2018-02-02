@@ -19,7 +19,6 @@
 
 <script>
 export default {
-  name: 'slot',
   props: {
     name: {
       type: Number,

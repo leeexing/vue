@@ -1,12 +1,12 @@
 <template>
-  <div id="mask" :class="{show: isShowMask}" @click="closeMask">
+  <div class="m-mask" :class="{show: isShowMask}" @click="closeMask">
   </div>
 </template>
 
 <script>
   import {mapGetters} from 'vuex'
   export default {
-    name: 'mask',
+    name: 'leeMask',
     computed: {
       ...mapGetters([
         'isShowMask'
@@ -21,7 +21,7 @@
 </script>
 
 <style lang="less" scoped>
-#mask {
+.m-mask {
   display: none;
   position: fixed;
   left: 0;

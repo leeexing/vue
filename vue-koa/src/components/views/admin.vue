@@ -42,8 +42,8 @@ export default {
     flex: auto;
     display: flex;
     #sidenav {
-      width: 200px;
-      flex-basis: 200px;
+      width: 201px;
+      flex-basis: 201px;
     }
     .content {
       flex: auto;

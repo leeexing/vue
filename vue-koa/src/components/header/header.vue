@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="m-header">
     <h3>{{blogName}}</h3>
     <!-- <p class="logout"><a href="#" @click="logout">给我一首歌的时间</a></p> -->
     <el-dropdown>
@@ -19,7 +19,7 @@
 <script>
   import {mapGetters} from 'vuex'
   export default {
-    name: 'header',
+    name: 'leeHeader',
     data () {
       return {
         blogName: "LEEING's Blog"
@@ -58,7 +58,7 @@
 </script>
 
 <style lang="less" scoped>
-  .header {
+  .m-header {
     position: fixed;
     top:0;
     left: 0;

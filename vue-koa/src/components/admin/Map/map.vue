@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 </template>
 
 <script>
@@ -40,7 +40,7 @@ import VueAMap from 'vue-amap'
 let amapManager = new VueAMap.AMapManager()
 import BreadCrumb from '../breadcrumb'
 export default {
-  name: 'map',
+  name: 'leeMap',
   data () {
     let that = this
     return {
