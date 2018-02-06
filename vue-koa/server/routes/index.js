@@ -12,7 +12,7 @@ const admin = require('./admin')
 const user = require('./user')
 const api = require('./api')
 
-router.use('/admin', admin.routes(), admin.allowedMethods())
+router.use('/myadmin', admin.routes(), admin.allowedMethods())
 router.use('/user', user.routes(), user.allowedMethods())
 router.use('/api', api.routes(), api.allowedMethods())
 

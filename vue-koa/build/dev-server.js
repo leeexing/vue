@@ -86,7 +86,7 @@ devMiddleware.waitUntilValid(() => {
  */
 var apiRouter = express.Router()
 var data = require('../music-data.json')
-console.log(data)
+// console.log(data)
 
 apiRouter.get('/music-data', (req, res) => {
   res.json({

@@ -12,37 +12,37 @@
           :collapse="collapseSideNav"
           router
         >
-          <el-menu-item index="/myadmin">
+          <el-menu-item index="/admin">
             <i class="el-icon-date"></i>
             <span slot="title">首页</span>
           </el-menu-item>
-          <el-menu-item index="/myadmin/userlist">
+          <el-menu-item index="/admin/userlist">
             <i class="el-icon-picture"></i>
             <span slot="title">用户列表</span>
           </el-menu-item>
           <el-submenu index="3">
             <template slot="title"><i class="el-icon-message"></i><span slot="title">博客管理</span></template>
-            <el-menu-item index="/myadmin/artical">文章列表</el-menu-item>
-            <el-menu-item index="/myadmin/category">文章分类</el-menu-item>
+            <el-menu-item index="/admin/artical">文章列表</el-menu-item>
+            <el-menu-item index="/admin/category">文章分类</el-menu-item>
           </el-submenu>
           <el-submenu index="4">
             <template slot="title"><i class="el-icon-star-on"></i><span slot="title">扩展应用</span></template>
-            <el-menu-item index="/myadmin/map">地图应用</el-menu-item>
+            <el-menu-item index="/admin/map">地图应用</el-menu-item>
             <el-menu-item index="/myadmin/one">One (一个)</el-menu-item>
-            <el-menu-item index="/myadmin/music">Music (网易)</el-menu-item>
-            <el-menu-item index="/myadmin/nsts">NSTS (培训)</el-menu-item>
+            <el-menu-item index="/admin/music">Music (网易)</el-menu-item>
+            <el-menu-item index="/admin/nsts">NSTS (培训)</el-menu-item>
           </el-submenu>
           <el-submenu index="5">
             <template slot="title"><i class="el-icon-star-off"></i><span slot="title">智能聊天</span></template>
-            <el-menu-item index="/myadmin/martina">火星人</el-menu-item>
-            <el-menu-item index="/myadmin/webgl">拯救者</el-menu-item>
-            <el-menu-item index="/myadmin/dr">DR</el-menu-item>
+            <el-menu-item index="/admin/martina">火星人</el-menu-item>
+            <el-menu-item index="/admin/webgl">拯救者</el-menu-item>
+            <el-menu-item index="/admin/dr">DR</el-menu-item>
           </el-submenu>
-          <el-menu-item index="/myadmin/setting">
+          <el-menu-item index="/admin/setting">
             <i class="el-icon-setting"></i>
             <span slot="title">设置</span>
           </el-menu-item>
-          <el-menu-item index="/myadmin/about">
+          <el-menu-item index="/admin/about">
             <i class="el-icon-setting"></i>
             <span slot="title">关于</span>
           </el-menu-item>

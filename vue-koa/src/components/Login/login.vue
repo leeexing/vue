@@ -1,20 +1,21 @@
 <template>
-  <div class="login">
-    <img class="logo" src="../../assets/logo1.png">
-    <el-row class="content">
-      <el-col :xs="24" :sm="{span: 6, offset: 9}">
-        <span class="title">欢迎登录</span>
-        <el-row>
-          <el-input v-model="account" placeholder="账号" type="text"></el-input>
-          <el-input @keyup.enter.native="loginToDo" v-model="password" placeholder="密码" type="password"></el-input>
-          <el-input v-if="isRegister" @keyup.enter.native="signIn" v-model="repassword" placeholder="确认密码" type="password"></el-input>
-          <el-button v-if="!isRegister" type="primary" @click="loginToDo">登录</el-button>
-          <el-button v-if="isRegister" type="success" @click="signIn">注册</el-button>
-          <a v-if="!isRegister" class="register" @click="switch2register">注册?</a>
-          <a v-if="isRegister" class="register" @click="switch2login">已注册，立马登录</a>
-        </el-row>
-      </el-col>
-    </el-row>
+  <div id="login">
+    <div class="m-login">
+      <img class="logo" src="../../assets/avatar.png">
+      <el-row class="content">
+        <el-col :xs="24" :sm="{span: 12, offset: 6}">
+          <el-row>
+            <el-input v-model="account" placeholder="账号" type="text"></el-input>
+            <el-input @keyup.enter.native="loginToDo" v-model="password" placeholder="密码" type="password"></el-input>
+            <el-input v-if="isRegister" @keyup.enter.native="signIn" v-model="repassword" placeholder="确认密码" type="password"></el-input>
+            <el-button v-if="!isRegister" type="primary" @click="loginToDo">登录</el-button>
+            <el-button v-if="isRegister" type="success" @click="signIn">注册</el-button>
+            <a v-if="!isRegister" class="register" @click="switch2register">注册?</a>
+            <a v-if="isRegister" class="register" @click="switch2login">已注册，立马登录</a>
+          </el-row>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -103,14 +104,23 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.login {
+#login {
   flex: auto;
-  padding-top: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+  background: url(http://cn.bing.com/az/hprichbg/rb/UrbinoRooftops_ZH-CN9076169426_1920x1080.jpg);
+  background-position: 100%;
+  .m-login {
+    padding: 20px;
+    border-radius: 5px;
+    // background: #f5f5f5;
+  }
   .logo {
     width: 200px;
     height: 200px;
-    border-radius: 50%;
+    border-radius: 5px;
   }
 }
 .content {
@@ -129,8 +139,9 @@ export default {
     display: inline-block;
     margin-top: 10px;
     text-decoration: underline;
+    color: #aaa;
     &:hover {
-      color: #007fff;
+      color: #ff7a45;
     }
   }
 }

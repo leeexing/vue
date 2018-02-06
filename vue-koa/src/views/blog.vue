@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="7">
           <div class="userinfo">
-            <img class="user-logo" src="../../assets/logo1.png" alt="作者">
+            <img class="user-logo" src="../assets/logo1.png" alt="作者">
             <p class="username">{{username}}</p>
             <p class="hobby">{{hobbies}}</p>
             <p class="github">
@@ -84,7 +84,7 @@
   }
   .username {
     font-size: 24px;
-    color: #666; 
+    color: #666;
   }
   .github {
     i {
@@ -97,7 +97,7 @@
     color: #999;
   }
   ul {
-    margin-top: 20px; 
+    margin-top: 20px;
   }
   .category {
     display: inline-block;
