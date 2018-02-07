@@ -2,7 +2,7 @@
   <div class="m-header">
     <h3>{{blogName}}</h3>
     <!-- <p class="logout"><a href="#" @click="logout">给我一首歌的时间</a></p> -->
-    <el-dropdown>
+    <el-dropdown trigger="click">
       <span class="el-dropdown-link">
         菜单<i class="el-icon-caret-bottom el-icon--right"></i>
       </span>

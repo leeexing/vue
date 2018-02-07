@@ -7,7 +7,7 @@
       active-text-color="#ffd04b"
     >
       <el-menu-item class="userlogo" index="1"><img src="../../assets/logo.png" alt=""></el-menu-item>
-      <el-menu-item class="userlogo" index="2">美丽の女神</el-menu-item>
+      <el-menu-item class="userlogo" index="2">아름다운 여신</el-menu-item>
       <!-- <el-menu-item index="2"><a href="#" target="_blank">不知道今天星期几</a></el-menu-item> -->
       <el-submenu class="logout" index="4">
         <template slot="title">리 아성</template>
