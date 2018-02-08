@@ -20,7 +20,7 @@
                     <el-button size="small" :plain="true" type="danger" @click="remove(index)">删除</el-button>
                   </span>
                 </div>
-              </template> 
+              </template>
             </template>
             <div v-else-if="Done">
               暂无待办事项
@@ -38,7 +38,7 @@
                   <el-button size="small" type="primary" @click="restore(index)">还原</el-button>
                 </span>
               </div>
-            </template> 
+            </template>
           </template>
           <div v-else>
             暂无已完成事项
@@ -138,6 +138,10 @@
 </script>
 
 <style lang="less" scoped>
+  .content {
+    width: 100%;
+    margin-top: 10%;
+  }
   .el-input {
     margin: 20px auto;
   }

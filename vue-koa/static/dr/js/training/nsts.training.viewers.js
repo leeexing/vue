@@ -1,11 +1,11 @@
 /**
- * 
+ *
  * 作者：lixing
  * 时间：07/26
- * 
+ *
  * @class CtViewer
- * 
- * 
+ *
+ *
  */
 class CtViewer {
     constructor(options) {
@@ -331,7 +331,7 @@ class CtViewer {
             this.drinstance.setInverse(false);
             this.drinstance.setSlicePosX(0.488);
             this.drinstance.showSusobj(this.options.showSusobj);
-            
+
             this.slinstance.setSliceIndex(125);
             this.$sliceInputBar.val(125).css('background-size', '50% 100%');
             this.slinstance.restoreOrigialPos();
@@ -735,13 +735,13 @@ CtViewer.default = {
 }
 
 /**
- * 
+ *
  * 作者：lixing
  * 时间：07/24
- * 
+ *
  * @class DrViewer
- * 
- * 
+ *
+ *
  */
 class DrViewer {
     constructor(options) {
@@ -765,8 +765,8 @@ class DrViewer {
         this.hasLoaded = false;  // 判断图像是否加载完成的字段
         this.selectTipResult = null;
         this.isTipSelected = false;
-		this.tipPos = [100,100]
-		this.hasInsertTip = false
+        this.tipPos = [100,100]
+        this.hasInsertTip = false
         /*
         页面元素
         */
@@ -796,7 +796,7 @@ class DrViewer {
         });
         this.tipManager = new Module3D.DRTipManager();
         this.tipManager.setDr(this.drinstance);
-        this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200], ['js/wgl/0303r.png',100,100]]);
+        // this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200], ['js/wgl/0303r.png',100,100]]);
         // this.tipManager.bindTipToDr(1,[['drtip.png',100,200], ['drtip2.png',100,100]]);
 
     }
@@ -819,7 +819,6 @@ class DrViewer {
         this.loadEndCallback && this.loadEndCallback();
     }
     initShowDR(angles) {
-		debugger
         let that = this;
         if (angles.length === 0) {
             NSTS.Plugin.Alert.Error('参数非法');
@@ -842,18 +841,43 @@ class DrViewer {
         //进入DR图像渲染工作
         this.showDR(angles[0].fileID);
     }
-    showDR(fileID) {
+    showDR(url) {
         // this.sql.getData(fileID, this.renderDR.bind(this));
-		this.testAngleOpr()
-		this.renderDR(2);
+        this.getImgDataUrl(url).then(data => {
+          // console.log(data)
+          this.renderDR(data.target.result)
+        })
+        // this.testAngleOpr()
+        // this.renderDR(2);
+    }
+    getImgDataUrl(url) {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader()
+            let xhr = new XMLHttpRequest()
+            xhr.open('get', url, true)
+            xhr.responseType = 'blob'
+            xhr.onload = function () {
+              if (this.status === 200) {
+                reader.readAsDataURL(this.response)
+              } else {
+                console.log(this.statusText)
+              }
+            }
+            xhr.send()
+            reader.onerror = error => {
+              reject(error)
+            }
+            reader.onload = data => {
+              resolve(data)
+            }
+        })
     }
     renderDR(renderObj) {
         console.log('%c Show DR ... ', 'background:#f90;color:#fff');
+        this.drinstance.loadTexture(this.options.DrContainerID, renderObj, 600, 600);
 
         // this.drinstance.loadTexture(this.options.DrContainerID, renderObj.B64, this.options.DrWidth, this.options.DrHeight);
-		// this.drinstance.loadTextureApp('testDR_app.png')
-		this.drinstance.loadTexture(this.options.DrContainerID, "js/wgl/testDr.png", 600, 600);
-		this.drinstance.loadTextureApp('js/wgl/testDr_app.png')
+        // this.drinstance.loadTextureApp('js/wgl/testDr_app.png')
     }
     resetDR() {
         this.drinstance.setShader('raw', 'standard', 'default');
@@ -877,9 +901,9 @@ class DrViewer {
         }
         this.drinstance.restoreOrigialPos();
         this.drinstance.setAbsorbLUT(65000, 0);
-		this.drinstance.showSusobj(this.options.showSusobj);
-		this.drinstance.setZoomIndex(6)
-		this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
+        this.drinstance.showSusobj(this.options.showSusobj);
+        this.drinstance.setZoomIndex(6)
+        this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
     }
     setShader() {
         console.log(`%c DR渲染参数： ${this.shaderA} ${this.shaderB} ${this.shaderC} `, 'background:#00bcd4;color:#fff');
@@ -896,15 +920,15 @@ class DrViewer {
         this.drinstance.renderer.forceContextLoss();
         this.drinstance.renderer.context = null;
         this.drinstance.renderer.domElement = null;
-		this.drinstance.renderer = null;
+        this.drinstance.renderer = null;
     }
     /**
      * 测试 DR 插入 tip
      */
     testAngleOpr() {
 		// 插入tip
-		let that = this
-		this.$anglesWrap.on('click', 'a', function(){
+      let that = this
+      this.$anglesWrap.on('click', 'a', function(){
 			if(!$(this).hasClass('active')){
                 let index = $(this).index()
 				$(this).addClass('active').siblings().removeClass('active')
@@ -921,36 +945,36 @@ class DrViewer {
 				}
 			}
 		})
-		// 禁止默认鼠标右键
-		$('.j-dr-container').on('contextmenu', function(e){
-			return false
-		})
-	}
-	loadDRTipImage(index) {
-        // this.tipManager.bindTipToDr(0,[['0303s.png',100,200], ['0303r.png',100,100]]);
-		let tipType = this.$anglesWrap.find('.active').index() == 0 ? '0303s.png': '0303r.png'
-		if (!this.hasInsertTip){
-            this.hasInsertTip = true
-            this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200]])
-		} else {
-            if (index === 0) {
-                this.tipPos = this.tipManager.original_pos_1
-            } else {
-                this.tipPos = this.tipManager.original_pos_2
-            }
-            console.warn(this.tipPos[0])
-            // this.drinstance.loadTexture(this.options.DrContainerID, 'js/wgl/testDs.png', 600, 600)
-            this.tipManager.bindTipToDr(index, [[`js/wgl/${tipType}`, this.tipPos[0][0], this.tipPos[0][1]]])
-		}
-			
-	}
-	loadDRTipImageRandom() {
-		this.drinstance.loadDRTipImage('js/wgl/0303s.png','', () => {
-			setTimeout(() => {
-				this.drinstance.setTipPositionRandom(this.tipPos.x + 100)
-			}, 100)
-		})
-	}
+      // 禁止默认鼠标右键
+      $('.j-dr-container').on('contextmenu', function(e){
+        return false
+      })
+    }
+    loadDRTipImage(index) {
+          // this.tipManager.bindTipToDr(0,[['0303s.png',100,200], ['0303r.png',100,100]]);
+      let tipType = this.$anglesWrap.find('.active').index() == 0 ? '0303s.png': '0303r.png'
+      if (!this.hasInsertTip){
+              this.hasInsertTip = true
+              this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200]])
+      } else {
+              if (index === 0) {
+                  this.tipPos = this.tipManager.original_pos_1
+              } else {
+                  this.tipPos = this.tipManager.original_pos_2
+              }
+              console.warn(this.tipPos[0])
+              // this.drinstance.loadTexture(this.options.DrContainerID, 'js/wgl/testDs.png', 600, 600)
+              this.tipManager.bindTipToDr(index, [[`js/wgl/${tipType}`, this.tipPos[0][0], this.tipPos[0][1]]])
+      }
+
+    }
+    loadDRTipImageRandom() {
+      this.drinstance.loadDRTipImage('js/wgl/0303s.png','', () => {
+        setTimeout(() => {
+          this.drinstance.setTipPositionRandom(this.tipPos.x + 100)
+        }, 100)
+      })
+    }
     setTip(tipid) {
         if (tipid === null || tipid === undefined) {
             NSTS.Plugin.Alert.Error('参数非法');//参数非法
@@ -958,7 +982,7 @@ class DrViewer {
         }
         if (parseInt(tipid, 10) > 0) {
             this.sql.getData(tipid, this.showTip.bind(this));
-        } 
+        }
     }
     showTip(obj) {
         //debugger
@@ -1192,9 +1216,9 @@ DrViewer.default = {
 }
 
 /**
- * 
+ *
  * 查询数据库
- * 
+ *
  * @class SqlLite
  */
 class SqlLite {

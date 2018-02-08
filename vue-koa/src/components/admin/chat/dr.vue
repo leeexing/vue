@@ -25,10 +25,22 @@ export default {
       src: ''
     }
   },
+  mounted () {
+    // this.$http.get('http://10.13.62.25:8070/api/DR/Query?types=None&PageNO=1&Limit=11&Offset=1', {
+    //   headers: {
+    //     Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
+    //   }
+    // })
+    //   .then(data => {
+    //     console.log(data)
+    //   })
+  },
   methods: {
     showImg () {
       this.isShow = !this.isShow
-      this.src = '/static/dr/index.html?business=INSERT_TIP&paperID=2&activeID=3'
+      // this.src = '../../src/assets/xxx.html'
+      // this.src = '/static/dr/index.html?business=INSERT_TIP&paperID=2&activeID=3'
+      this.src = '/static/dr/index.html?business=MAP_BROWSE&paperID=2&activeID=3'
       this.$refs.nstswrap.fullScreen()
     },
     toggleIsShow (val) {

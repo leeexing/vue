@@ -32,7 +32,7 @@ export default {
         return ['webkitRequestFullScreen', 'webkitCancelFullScreen']
       }
     })()
-    console.log(this.fullScreenType)
+    // console.log(this.fullScreenType)
   },
   watch: {
     src (newVlaue, oldValue) {
