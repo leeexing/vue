@@ -744,138 +744,132 @@ CtViewer.default = {
  *
  */
 class DrViewer {
-    constructor(options) {
-        this.options = Object.assign({},DrViewer.default, options || {});
-        this.init();
+    constructor(options={}) {
+        this.options = {
+          DrWidth: 400, // 默认宽
+          DrHeight: 400, // 默认高
+          DrContainerID: 'canvasdr',// DR图像容器ID
+          showSusobj: true, // 是否"突出显示危险品"
+        }
+        Object.assign(this.options, options)
+        this.init()
     }
 
     init() {
-        this.initSqlLite();
-        this.initDrElement();
-        this.initToolsBtnEvent();
+        this.initSqlLite()
+        this.initDrElement()
+        this.initToolsBtnEvent()
     }
     initDrElement() {
-        /*
-        drinstance 渲染变量
-        */
-        this.shaderA = 'raw'; //第一个参数。默认就是表面增强
-        this.shaderB = 'standard'; //第二个参数。默认是标准
-        this.shaderC = 'default'; //第三个参数。默认就是真彩色
-        this.isDanger = false;  // 危险品和包裹显示 处理不同
-        this.hasLoaded = false;  // 判断图像是否加载完成的字段
-        this.selectTipResult = null;
-        this.isTipSelected = false;
+        // drinstance 渲染变量
+        this.shaderA = 'raw' //第一个参数。默认就是表面增强
+        this.shaderB = 'standard' //第二个参数。默认是标准
+        this.shaderC = 'default' //第三个参数。默认就是真彩色
+        this.isDanger = false  // 危险品和包裹显示 处理不同
+        this.hasLoaded = false  // 判断图像是否加载完成的字段
+        this.selectTipResult = null
+        this.isTipSelected = false
         this.tipPos = [100,100]
         this.hasInsertTip = false
-        /*
-        页面元素
-        */
-        this.body = $('body');
-        this.loadingLayer = $('#loading');
-        this.$drinstanceWrap = $(`#${this.options.DrContainerID}`);
-        this.curOperateName = $('.j-cur-operate');
-        this.zoomIndex = $('.j-dr-zoomindex');
-        this.btns = $('.j-tools a');
-        this.coloursBtn = $('.colours');
-        this.marktipBtn = $('.marktip');
-        this.$anglesWrap = $('.dr-angles');
+        this.activeAngleIndex = 0
+        // 页面元素
+        this.body = $('body')
+        this.loadingLayer = $('#loading')
+        this.$drinstanceWrap = $(`#${this.options.DrContainerID}`)
+        this.curOperateName = $('.j-cur-operate')
+        this.zoomIndex = $('.j-dr-zoomindex')
+        this.btns = $('.j-tools a')
+        this.coloursBtn = $('.colours')
+        this.marktipBtn = $('.marktip')
+        this.$anglesWrap = $('.j-angles')
 
-        this.drinstance = new Module3D.DRImageInstance();
+        this.drinstance = new Module3D.DRImageInstance()
 
-        this.drinstance.setScaleMinAndMax(0.1, 4); //缩放比例最大最小值
+        this.drinstance.setScaleMinAndMax(0.1, 4) //缩放比例最大最小值
         this.drinstance.setCallbackWhenLoaded(() => { //DR图像加载完成后
-            this.loadEnding();
-            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1));
-        });
+            this.loadEnding()
+            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
+        })
         this.drinstance.setMouseWheelCallback(() => { //dr 缩放系数
-            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1));
-        });
-        this.drinstance.showSusobj(this.options.showSusobj);//dr练习时不让危险品突出显示
+            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
+        })
+        this.drinstance.showSusobj(this.options.showSusobj)//dr练习时不让危险品突出显示
         this.drinstance.setMMSelectCallback((data) => {
-            this.setSelectTipResult(data);
-        });
-        this.tipManager = new Module3D.DRTipManager();
-        this.tipManager.setDr(this.drinstance);
-        // this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200], ['js/wgl/0303r.png',100,100]]);
-        // this.tipManager.bindTipToDr(1,[['drtip.png',100,200], ['drtip2.png',100,100]]);
+            this.setSelectTipResult(data)
+        })
+        this.tipManager = new Module3D.DRTipManager()
+        this.tipManager.setDr(this.drinstance)
+        // this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200], ['js/wgl/0303r.png',100,100]])
+        // this.tipManager.bindTipToDr(1,[['drtip.png',100,200], ['drtip2.png',100,100]])
 
     }
     loadStart() {
-        this.loadingLayer.show();
-        this.hasLoaded = false;
+        this.loadingLayer.show()
+        this.hasLoaded = false
     }
     loadEnding() {
-        let that = this;
-        this.resetDR();
-        this.hasLoaded = true;
-        this.loadingLayer.hide();
-        this.$drinstanceWrap
+        let that = this
+        this.resetDR()
+        this.hasLoaded = true
+        this.loadingLayer.hide()
         if (this.isDanger) {
-            this.drinstance.switchToTipImage(true);
+            this.drinstance.switchToTipImage(true)
         } else {
-            this.drinstance.switchToTipImage(false);
+            this.drinstance.switchToTipImage(false)
         }
-        this.drinstance.showSusobj(this.options.showSusobj);
-        this.loadEndCallback && this.loadEndCallback();
+        this.drinstance.showSusobj(this.options.showSusobj)
+        this.loadEndCallback && this.loadEndCallback()
     }
-    initShowDR(angles) {
-        let that = this;
+    _initShowDR(angles) {
+        let that = this
         if (angles.length === 0) {
-            NSTS.Plugin.Alert.Error('参数非法');
-            return;
+            NSTS.Plugin.Alert.Error('参数非法')
+            return
         }
-        this.loadStart();
-        let anglesHTML = '';
+        // this.loadStart()
+        let anglesHTML = ''
         angles.forEach(function (angle, index) {
-            let isActive = index == 0 ? 'active' : '';
-            let indexName = index == 0 ? 'View 1' : 'View 2';
-            anglesHTML += `<a class="${isActive}" data-fileid="${angle.fileID}">${indexName}</a>`;
-        });
-        this.$anglesWrap.html(anglesHTML);
+            let isActive = index == 0 ? 'active' : ''
+            let indexName = index == 0 ? 'View 1' : 'View 2'
+            anglesHTML += `<a class="${isActive}" data-fileid="${angle.fileID}">${indexName}</a>`
+        })
+        this.$anglesWrap.html(anglesHTML)
         //进行视角切换初始化事件绑定
         this.$anglesWrap.find('a').click(function () {
-            let fileID = $(this).data('fileid');
-            $(this).addClass('active').siblings().removeClass('active');
-            that.showDR(fileID);
-        });
+            let fileID = $(this).data('fileid')
+            $(this).addClass('active').siblings().removeClass('active')
+            that.showDR(fileID)
+        })
         //进入DR图像渲染工作
-        this.showDR(angles[0].fileID);
+        this.showDR(angles[0].fileID)
     }
-    showDR(url) {
-        // this.sql.getData(fileID, this.renderDR.bind(this));
-        this.getImgDataUrl(url).then(data => {
-          // console.log(data)
-          this.renderDR(data.target.result)
-        })
-        // this.testAngleOpr()
-        // this.renderDR(2);
+    showDR(id) {
+        this.sql.getData(id, this.initShowDR.bind(this))
+        // this.sql.dropTable()
     }
-    getImgDataUrl(url) {
-        return new Promise((resolve, reject) => {
-            let reader = new FileReader()
-            let xhr = new XMLHttpRequest()
-            xhr.open('get', url, true)
-            xhr.responseType = 'blob'
-            xhr.onload = function () {
-              if (this.status === 200) {
-                reader.readAsDataURL(this.response)
-              } else {
-                console.log(this.statusText)
-              }
-            }
-            xhr.send()
-            reader.onerror = error => {
-              reject(error)
-            }
-            reader.onload = data => {
-              resolve(data)
-            }
-        })
+    initShowDR(data) {
+      console.log(99999)
+      console.log(data)
+      let that = this
+      this.renderingData = data
+      // this.loadStart()
+      let anglesHTML = ''
+      data.forEach((angle, index) => {
+        let isActive = index == 0 ? 'active' : ''
+        let indexName = index == 2 ? '视角一' : '视角二'
+        if (angle !== null && (index === 0 || index === 2)) {
+          anglesHTML += `<a class="${isActive}">${indexName}</a>`
+        }
+      })
+      this.$anglesWrap.html(anglesHTML)
+      this.renderDR()
     }
     renderDR(renderObj) {
-        console.log('%c Show DR ... ', 'background:#f90;color:#fff');
-        this.drinstance.loadTexture(this.options.DrContainerID, renderObj, 600, 600);
-
+        console.log('%c Show DR ... ', 'background:#f90;color:#fff')
+        this.drinstance.loadTexture(this.options.DrContainerID, this.renderingData[this.activeAngleIndex], 600, 600)
+        if (this.renderingData[this.activeAngleIndex + 1] !== null) {
+          this.drinstance.loadTextureApp(this.renderingData[this.activeAngleIndex + 1])
+        }
         // this.drinstance.loadTexture(this.options.DrContainerID, renderObj.B64, this.options.DrWidth, this.options.DrHeight);
         // this.drinstance.loadTextureApp('js/wgl/testDr_app.png')
     }
@@ -906,52 +900,51 @@ class DrViewer {
         this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
     }
     setShader() {
-        console.log(`%c DR渲染参数： ${this.shaderA} ${this.shaderB} ${this.shaderC} `, 'background:#00bcd4;color:#fff');
-        this.drinstance.setShader(this.shaderA, this.shaderB, this.shaderC);
-        this.drinstance.refreshDisplay();
+        console.log(`%c DR渲染参数： ${this.shaderA} ${this.shaderB} ${this.shaderC} `, 'background:#00bcd4;color:#fff')
+        this.drinstance.setShader(this.shaderA, this.shaderB, this.shaderC)
+        this.drinstance.refreshDisplay()
     }
     // 标记 tip 后的设置的回调函数
     setSelectTipResult(data) {
-        console.log(`%c DR 标记嫌疑物 ${data} `, 'background:#f90;color:#fff');
-        this.selectTipResult = data;
-        this.isTipSelected = true;
+        console.log(`%c DR 标记嫌疑物 ${data} `, 'background:#f90;color:#fff')
+        this.selectTipResult = data
+        this.isTipSelected = true
     }
     stopRender() {
-        this.drinstance.renderer.forceContextLoss();
-        this.drinstance.renderer.context = null;
-        this.drinstance.renderer.domElement = null;
-        this.drinstance.renderer = null;
+        this.drinstance.renderer.forceContextLoss()
+        this.drinstance.renderer.context = null
+        this.drinstance.renderer.domElement = null
+        this.drinstance.renderer = null
     }
     /**
      * 测试 DR 插入 tip
      */
     testAngleOpr() {
-		// 插入tip
+      // 插入tip
       let that = this
       this.$anglesWrap.on('click', 'a', function(){
-			if(!$(this).hasClass('active')){
-                let index = $(this).index()
-				$(this).addClass('active').siblings().removeClass('active')
-				if(index === 0) {
-                    that.renderDR()
-                } else {
-                    that.drinstance.loadTexture(that.options.DrContainerID, 'js/wgl/testDs.png', 600, 600)
-                    that.drinstance.loadTextureApp('js/wgl/testDs_app.png')
-				}
-				if (that.hasInsertTip){
-                    // setTimeout(() => {
-                        that.loadDRTipImage(index)
-                    // }, 1000)
-				}
-			}
-		})
+        if(!$(this).hasClass('active')){
+                  let index = $(this).index()
+          $(this).addClass('active').siblings().removeClass('active')
+          if(index === 0) {
+                      that.renderDR()
+                  } else {
+                      that.drinstance.loadTexture(that.options.DrContainerID, 'js/wgl/testDs.png', 600, 600)
+                      that.drinstance.loadTextureApp('js/wgl/testDs_app.png')
+          }
+          if (that.hasInsertTip){
+                      // setTimeout(() => {
+                          that.loadDRTipImage(index)
+                      // }, 1000)
+          }
+        }
+      })
       // 禁止默认鼠标右键
       $('.j-dr-container').on('contextmenu', function(e){
         return false
       })
     }
     loadDRTipImage(index) {
-          // this.tipManager.bindTipToDr(0,[['0303s.png',100,200], ['0303r.png',100,100]]);
       let tipType = this.$anglesWrap.find('.active').index() == 0 ? '0303s.png': '0303r.png'
       if (!this.hasInsertTip){
               this.hasInsertTip = true
@@ -963,7 +956,6 @@ class DrViewer {
                   this.tipPos = this.tipManager.original_pos_2
               }
               console.warn(this.tipPos[0])
-              // this.drinstance.loadTexture(this.options.DrContainerID, 'js/wgl/testDs.png', 600, 600)
               this.tipManager.bindTipToDr(index, [[`js/wgl/${tipType}`, this.tipPos[0][0], this.tipPos[0][1]]])
       }
 
@@ -977,316 +969,489 @@ class DrViewer {
     }
     setTip(tipid) {
         if (tipid === null || tipid === undefined) {
-            NSTS.Plugin.Alert.Error('参数非法');//参数非法
-            return;
+            NSTS.Plugin.Alert.Error('参数非法')//参数非法
+            return
         }
         if (parseInt(tipid, 10) > 0) {
-            this.sql.getData(tipid, this.showTip.bind(this));
+            this.sql.getData(tipid, this.showTip.bind(this))
         }
     }
     showTip(obj) {
-        //debugger
         console.log('%c tip 正在上膛 ...','background: #5b0;color:#fff')
-        this.drinstance.loadDRImage(obj.B64, obj.TXT, this.setTipPosition(obj));
+        this.drinstance.loadDRImage(obj.B64, obj.TXT, this.setTipPosition(obj))
     }
     setTipPosition(obj) {
 		this.drinstance.setTipPosition(100, 100)
     }
+    // 事件绑定
     initToolsBtnEvent() {
-        let that = this;
+        let that = this
+        // 视角切换
+        this.$anglesWrap.on('click', 'a', function() {
+          if (!$(this).hasClass('active')) {
+            $(this).addClass('active').siblings().removeClass('active')
+            if($(this).index() === 1) {
+              that.activeAngleIndex = 2
+            } else {
+              that.activeAngleIndex = 0
+            }
+            that.renderDR()
+          }
+        })
 
         // 渲染参数B => 超级穿透
-        this.hiBtn = $('.j-tools .hi');
+        this.hiBtn = $('.j-tools .hi')
         this.hiBtn.click(function () {
             if ($(this).hasClass('active')) {
-                $(this).removeClass('active');
+                $(this).removeClass('active')
             }
             else {
-                $(this).addClass('active');
+                $(this).addClass('active')
             }
-            that.shaderB = $(this).hasClass('active') ? 'superpenetrate' : 'standard';
-            that.setShader();
-        });
+            that.shaderB = $(this).hasClass('active') ? 'superpenetrate' : 'standard'
+            that.setShader()
+        })
 
         // 按钮组 C  => 灰色、彩色、ms、os    @ CT DR 通用
-        this.groupC = $('.j-tools a[data-group="c"]');
+        this.groupC = $('.j-tools a[data-group="c"]')
         this.groupC.click(function () {
             if (!$(this).hasClass('active')) {
-                that.groupC.removeClass('active');
-                $(this).addClass('active');
+                that.groupC.removeClass('active')
+                $(this).addClass('active')
             }
             else {
                 if ($(this).hasClass('colours')) {
                     return false
                 }
                 else {
-                    $(this).removeClass('active');
-                    that.groupC.filter('.colours').addClass('active');
+                    $(this).removeClass('active')
+                    that.groupC.filter('.colours').addClass('active')
                 }
             }
-            groupC();
-        });
+            groupC()
+        })
         function groupC() {
-            var $activeBtn = that.groupC.filter('.active');
-            that.shaderC = $activeBtn.data('tag');
-            that.setShader();
+            var $activeBtn = that.groupC.filter('.active')
+            that.shaderC = $activeBtn.data('tag')
+            that.setShader()
         }
 
         // 反色显示  @ CT DR shared
-        this.inverseBtn = $('.j-tools .inverse');
+        this.inverseBtn = $('.j-tools .inverse')
         this.inverseBtn.click(function () {
             if ($(this).hasClass('active')) {
-                $(this).removeClass('active');
-                $('body').removeClass('inverse');
+                $(this).removeClass('active')
+                $('body').removeClass('inverse')
             }
             else {
-                $(this).addClass('active');
-                $('body').addClass('inverse');
+                $(this).addClass('active')
+                $('body').addClass('inverse')
             }
 
-            let showType = $(this).hasClass('active');
-            inverse(showType);
-        });
+            let showType = $(this).hasClass('active')
+            inverse(showType)
+        })
         function inverse(showType) {
-            that.drinstance.setInverse(showType);
-            that.drinstance.composer.render(0.1);
+            that.drinstance.setInverse(showType)
+            that.drinstance.composer.render(0.1)
         }
 
         // 重置
         $('.dr-btn.reset').click(function () {
-            that.resetDR();
-        });
+            that.resetDR()
+        })
 
         //突出显示嫌疑物 DR
         $('.marktip').click(function () {
             if (!$(this).hasClass('active')) {
-                $(this).addClass('active');
-                that.drinstance.showSusobj(true);
+                $(this).addClass('active')
+                that.drinstance.showSusobj(true)
             }
             else {
-                $(this).removeClass('active');
-                that.drinstance.showSusobj(false);
+                $(this).removeClass('active')
+                that.drinstance.showSusobj(false)
             }
         });
 
         // 可变吸收率
-        this.absorbValue = 0;
-        this.groupAbsorb = $('.j-tools .dr-btn[data-group="absor"]');
+        this.absorbValue = 0
+        this.groupAbsorb = $('.j-tools .dr-btn[data-group="absor"]')
         this.groupAbsorb.click(function () {
-            that.absorbValue += parseInt($(this).data('absor'));
+            that.absorbValue += parseInt($(this).data('absor'))
             console.log(that.absorbValue)
             if (that.absorbValue > 0) {
-                that.groupAbsorb.removeClass('active').filter('.absor-plus').addClass('active');
+                that.groupAbsorb.removeClass('active').filter('.absor-plus').addClass('active')
             }
             else if (that.absorbValue < 0) {
-                that.groupAbsorb.removeClass('active').filter('.absor-minus').addClass('active');
+                that.groupAbsorb.removeClass('active').filter('.absor-minus').addClass('active')
             }
             else {
-                that.groupAbsorb.removeClass('active');
+                that.groupAbsorb.removeClass('active')
             }
-            groupAbsorb();
-        });
+            groupAbsorb()
+        })
         function groupAbsorb() {
             if (that.absorbValue > 25) {
-                that.absorbValue = 25;
-                return false;
+                that.absorbValue = 25
+                return false
             }
             if (that.absorbValue < -25) {
-                that.absorbValue = -25;
-                return false;
+                that.absorbValue = -25
+                return false
             }
-            that.drinstance.setAbsorbLUT(65000, that.absorbValue);
-            showOperateName();
+            that.drinstance.setAbsorbLUT(65000, that.absorbValue)
+            showOperateName()
         }
 
         // 超级增强     @ DR 独有
-        this.groupADr = $('.j-tools .dr-btn[data-group="a"]');
+        this.groupADr = $('.j-tools .dr-btn[data-group="a"]')
         this.groupADr.click(function () {
             if ($(this).hasClass('active')) {
-                $(this).removeClass('active');
+                $(this).removeClass('active')
             }
             else {
-                $(this).addClass('active');
+                $(this).addClass('active')
             }
-            that.shaderA = $(this).hasClass('active') ? 'super' : 'raw';
-            that.drinstance.updateShader(that.shaderA, that.shaderB, that.shaderC);
-            that.drinstance.refreshDisplay();
-        });
+            that.shaderA = $(this).hasClass('active') ? 'super' : 'raw'
+            that.drinstance.updateShader(that.shaderA, that.shaderB, that.shaderC)
+            that.drinstance.refreshDisplay()
+        })
 
         /*
          显示操作按钮
         */
         $('.j-tools a').click(function () {
-            showOperateName();
-        });
+            showOperateName()
+        })
         function showOperateName() {
-            var nameText = [];
+            var nameText = []
             $('.j-tools a').filter('.active').each(function (index, elem) {
-                let operateName = $(elem).attr('title');
-                nameText.push(`<span>${operateName}</span>`);
-            });
-            that.curOperateName.html(nameText.join('+'));
+                let operateName = $(elem).attr('title')
+                nameText.push(`<span>${operateName}</span>`)
+            })
+            that.curOperateName.html(nameText.join('+'))
         }
 
         /*
             键盘监听事件
         */
-        this.surfaceBtn = $('.j-tools .surface');
-        this.bwBtn = $('.j-tools .bw');
-        this.absorbPlusBtn = this.groupAbsorb.filter('.absor-plus');
-        this.absorbMinusBtn = this.groupAbsorb.filter('.absor-minus');
-        this.isAlphaOpen = false;
-        this.alphaValue = 0.33;
-        this.prevBtn = $('.j-prevbtn .btn-prev');
-        this.nextBtn = $('.j-nextbtn .btn-next');
+        this.surfaceBtn = $('.j-tools .surface')
+        this.bwBtn = $('.j-tools .bw')
+        this.absorbPlusBtn = this.groupAbsorb.filter('.absor-plus')
+        this.absorbMinusBtn = this.groupAbsorb.filter('.absor-minus')
+        this.isAlphaOpen = false
+        this.alphaValue = 0.33
+        this.prevBtn = $('.j-prevbtn .btn-prev')
+        this.nextBtn = $('.j-nextbtn .btn-next')
         $(window).keydown(function (event) {
-            let keyType = event.which;
+            let keyType = event.which
             //CT && DR 反色 key:W
             if (keyType == 87 && event.shiftKey) {
                 if (that.inverseBtn.hasClass('active')) {
-                    that.inverseBtn.click();
+                    that.inverseBtn.click()
                 }
-                return;
+                return
             }
             if (keyType == 87) {
                 if (!that.inverseBtn.hasClass('active')) {
-                    that.inverseBtn.click();
+                    that.inverseBtn.click()
                 }
                 return
             }
             //DR 灰色显示 key:G
             if (keyType == 71 && event.shiftKey) {
                 if (that.bwBtn.hasClass('active')) {
-                    that.bwBtn.click();
+                    that.bwBtn.click()
                 }
-                return;
+                return
             }
             if (keyType == 71) {
                 if (!that.bwBtn.hasClass('active')) {
-                    that.bwBtn.click();
+                    that.bwBtn.click()
                 }
-                return;
+                return
             }
             // DR 高能穿透 key:H
             if (keyType == 72 && event.shiftKey) {
                 if (that.hiBtn.hasClass('active')) {
-                    that.hiBtn.click();
+                    that.hiBtn.click()
                 }
-                return;
+                return
             }
             if (keyType == 72) {
                 if (!that.hiBtn.hasClass('active')) {
-                    that.hiBtn.click();
+                    that.hiBtn.click()
                 }
-                return;
+                return
             }
             if (keyType == 37) {
                 if (that.prevBtn.is(':visible')) {
-                    that.prevBtn.click();
+                    that.prevBtn.click()
                 }
-                return;
+                return
             }
             // 下一副
             if (keyType == 39) {
                 if (that.nextBtn.is(':visible')) {
-                    that.nextBtn.click();
+                    that.nextBtn.click()
                 }
-                return;
+                return
             }
             // 可变吸收率 增加
             if (keyType == 38) {
-                that.absorbPlusBtn.click();
-                return;
+                that.absorbPlusBtn.click()
+                return
             }
             if (keyType == 40) {
-                that.absorbMinusBtn.click();
-                return;
+                that.absorbMinusBtn.click()
+                return
             }
-        });
+        })
     }
     initSqlLite() {
-        this.sql = new SqlLite();
+        this.sql = new SqLiteDr()
     }
-}
-DrViewer.default = {
-    DrWidth: 400, // 默认宽
-    DrHeight: 400, // 默认高
-    DrContainerID: 'canvasdr',// DR图像容器ID
-    showSusobj: true, // 是否"突出显示危险品"
 }
 
 /**
  *
- * 查询数据库
+ * 本地查询数据库
  *
- * @class SqlLite
+ * @class SqLite
+ *
+ * CT 图像本地存储
  */
-class SqlLite {
+class SqLiteCt {
     constructor(mode) {
-        this.mode = mode || 'load';
-        this.init();
+        this.mode = 'load'
+        this.version = '3'
+        this.init()
     }
     init() {
-        let _dbName = 'NstsFiles';
-        let _fileTable = 'File_MainStore';
-        this.dbHleper = new SqLiteHelper({ _db: window.openDatabase(_dbName, '3', 'website DB', 2000 * 1024 * 1024) });
-        if (this.mode == 'load') {
-            let tb = _fileTable = [{
-                table: _fileTable,
-                properties: [
-                  { name: 'FileID', type: 'INTEGEER PRIMARY KEY' },
-                  { name: 'Base64Str', type: 'TEXT' },
-                  { name: 'PngTxt', type: 'TEXT' },
-                  { name: 'Suspects', type: 'TEXT' },
-                  { name: 'Zeff', type: 'TEXT' },
-                ]
-            }];
-            this.dbHleper.check(tb);
-        }
-        else if (this.mode == 'del') {
-            this.dbHleper.dropTable(_fileTable);
-        }
+      let _dbName = 'NstsFiles'
+      let _fileTable = this.tableName = 'File_MainStore_CT'
+      this.dbHelper = new SqLiteHelper({ _db: window.openDatabase(_dbName, this.version, 'website DB for CT', 1000 * 1024 * 1024)})
+      let tb = [{
+        table: _fileTable,
+        properties: [
+          { name: 'FileID', type: 'INTEGEER PRIMARY KEY' },
+          { name: 'ImgData', type: 'TEXT' },
+          { name: 'ImgDesData', type: 'TEXT' },
+          { name: 'SuspectCubeData', type: 'TEXT' },
+          { name: 'Density', type: 'TEXT' },
+          { name: 'Angle1', type: 'TEXT' },
+          { name: 'Suspect1', type: 'TEXT' },
+          { name: 'Angle2', type: 'TEXT' },
+          { name: 'Suspect2', type: 'TEXT' },
+        ]
+      }]
+      this.dbHelper.check(tb)
+    }
+    dropTable() {
+      this.dbHelper.dropTable(this.tableName)
+      console.log(`%c ${this.tableName}数据表 删除成功！！！`, 'background:#f00')
     }
     getData(fileid, callback) {
-        let _self = this;
-        let callbackObj = { // 回调函数的参数
-            ID: fileid
-        };
-        this.dbHleper.query('select Base64Str,PngTxt,Suspects,Zeff FROM File_MainStore WHERE FileID = ' + fileid, function (e, reader) {
-            if (reader != null && reader.rows != null && reader.rows.length == 1) {
-                console.log(`%c 数据本地读取 ... `, 'background:#000;color:#fff');
-                let dbobj = reader.rows[0];
-                callbackObj.B64 = dbobj.Base64Str;
-                callbackObj.TXT = dbobj.PngTxt;
-                callbackObj.Suspects = dbobj.Suspects;
-                callbackObj.Zeff = dbobj.Zeff;
+      console.warn(fileid)
+      let that = this
+      this.dbHelper.query(`select ImgData, ImgDesData, SuspectCubeData, Density FROM File_MainStore_CT WHERE FileID =${fileid}`, function (e, reader) {
+        if (reader != null && reader.rows != null && reader.rows.length == 1) {
+          console.log(`%c 数据本地读取 ... `, 'background:#eb2f96;color:#fff')
+          let dbobj = reader.rows[0]
+          console.log(dbobj)
+          callback(Object.values(dbobj))
+        }
+        else {
+          console.log(`%c 数据远程下载 ... `, 'background:#000;color:#fff')
 
-                callback(callbackObj);
+          $.ajax({
+            url: `http://10.13.62.25:8070/api/CT/${fileid}`,
+            headers: {
+              Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
+            },
+            success (rawData) {
+              console.log(rawData)
+              that.fetchData(rawData.package.CT).then(data => {
+                console.log(data)
+                let pushdata = []
+                pushdata.push([
+                  {'name': 'FileID', 'value': rawData.package.id},
+                  {'name': 'ImgData', 'value': data[0]},
+                  {'name': 'ImgDesData', 'value': data[1]},
+                  {'name': 'SuspectCubeData', 'value': data[2]},
+                  {'name': 'Density', 'value': data[3]}
+                ])
+                that.dbHelper.insert(that.tableName, pushdata)
+                callback(data)
+              })
             }
-            else {
-                console.log(`%c 数据远程下载 ... `, 'background:#000;color:#fff');
-                NSTS.NET.GET(FileURL + 'g/' + fileid, null, function (filedata) {
-                    if (!filedata.success) {
-                        console.log(`%c 图像资源下载报错：${filedata.error} `, 'background:#f00;color:#fff');
-                        return;
-                    }
-                    let pushdata = [];
-                    pushdata.push([
-                      { 'name': 'FileID', 'value': callbackObj.ID },
-                      { 'name': 'Base64Str', 'value': filedata.b64 },
-                      { 'name': 'PngTxt', 'value': filedata.txt },
-                      { 'name': 'Suspects', 'value': filedata.suspects },
-                      { 'name': 'Zeff', 'value': filedata.zeff },
-                    ]);
-                    _self.dbHleper.insert('File_MainStore', pushdata);
-                    callbackObj.B64 = filedata.b64;
-                    callbackObj.TXT = filedata.txt;
-                    callbackObj.Suspects = filedata.suspects;
-                    callbackObj.Zeff = filedata.zeff;
-
-                    callback(callbackObj);
-                })
-            }
-        })
+          })
+        }
+      })
     }
+    fetchData(data) {
+      let fetchDataFns = []
+      // 视角主体数据
+      data.forEach(item => {
+        fetchDataFns.push(this.loadDataByFileReader(item.url))
+        if (item.suspect === '') {
+          fetchDataFns.push(this.loadEmptyData())
+        }
+      })
+      return new Promise((resolve, reject) => {
+        Promise.all(fetchDataFns)
+          .then(data => {
+            resolve(data)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    }
+    loadDataByFileReader(url) {
+      return new Promise((resolve, reject) => {
+        let reader = new FileReader()
+        let xhr = new XMLHttpRequest()
+        xhr.open('get', url, true)
+        xhr.responseType = 'blob'
+        xhr.onload = function () {
+          if (this.status === 200) {
+            reader.readAsDataURL(this.response)
+          } else {
+            console.log(this.statusText)
+          }
+        }
+        xhr.send()
+        reader.onerror = error => {
+          reject(error)
+        }
+        reader.onload = data => {
+          resolve(data.target.result)
+        }
+      })
+    }
+    // 当 suspect='' 时，直接返回空数据
+    loadEmptyData() {
+      return new Promise((resolve, reject) => {
+        resolve(null)
+      })
+    }
+}
+
+/**
+ * DR 图像本地存储
+ */
+class SqLiteDr {
+  constructor(mode) {
+      this.mode = 'load'
+      this.version = '3'
+      this.init()
+  }
+  init() {
+    let _dbName = 'NstsFiles'
+    let _fileTable = this.tableName = 'File_MainStore_DR'
+    this.dbHelper = new SqLiteHelper({ _db: window.openDatabase(_dbName, this.version, 'website DB for DR', 1000 * 1024 * 1024)})
+    let tb = [{
+      table: _fileTable,
+      properties: [
+        { name: 'FileID', type: 'INTEGEER PRIMARY KEY' },
+        { name: 'Angle1', type: 'TEXT' },
+        { name: 'Suspect1', type: 'TEXT' },
+        { name: 'Angle2', type: 'TEXT' },
+        { name: 'Suspect2', type: 'TEXT' }
+      ]
+    }]
+    this.dbHelper.check(tb)
+  }
+  dropTable() {
+    this.dbHelper.dropTable(this.tableName)
+    console.log(`%c ${this.tableName}数据表 删除成功！！！`, 'background:#f00')
+  }
+  getData(fileid, callback) {
+    console.warn(fileid)
+    let that = this
+    this.dbHelper.query(`select Angle1, Suspect1, Angle2, Suspect2 FROM File_MainStore_DR WHERE FileID =${fileid}`, function (e, reader) {
+      if (reader != null && reader.rows != null && reader.rows.length == 1) {
+        console.log(`%c 数据本地读取 ... `, 'background:#eb2f96;color:#fff')
+        let dbobj = reader.rows[0]
+        console.log(dbobj)
+        callback(Object.values(dbobj))
+      }
+      else {
+        console.log(`%c 数据远程下载 ... `, 'background:#000;color:#fff')
+
+        $.ajax({
+          url: `http://10.13.62.25:8070/api/DR/${fileid}`,
+          headers: {
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
+          },
+          success (rawData) {
+            console.log(rawData)
+            that.fetchData(rawData.package.dr).then(data => {
+              console.log(data)
+              let pushdata = []
+              pushdata.push([
+                {'name': 'FileID', 'value': rawData.package.id},
+                {'name': 'Angle1', 'value': data[0]},
+                {'name': 'Suspect1', 'value': data[1] || null},
+                {'name': 'Angle2', 'value': data[2] || null},
+                {'name': 'Suspect2', 'value': data[3] || null}
+              ])
+              that.dbHelper.insert(that.tableName, pushdata)
+              callback(data)
+            })
+          }
+        })
+      }
+    })
+  }
+  fetchData(data) {
+    let fetchDataFns = []
+    // 视角主体数据
+    data.forEach(item => {
+      fetchDataFns.push(this.loadDataByFileReader(item.url))
+      if (item.suspect === '') {
+        fetchDataFns.push(this.loadEmptyData())
+      } else {
+        fetchDataFns.push(this.loadDataByFileReader(item.suspect))
+      }
+    })
+    return new Promise((resolve, reject) => {
+      Promise.all(fetchDataFns)
+        .then(data => {
+          resolve(data)
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  }
+  loadDataByFileReader(url) {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader()
+      let xhr = new XMLHttpRequest()
+      xhr.open('get', url, true)
+      xhr.responseType = 'blob'
+      xhr.onload = function () {
+        if (this.status === 200) {
+          reader.readAsDataURL(this.response)
+        } else {
+          console.log(this.statusText)
+        }
+      }
+      xhr.send()
+      reader.onerror = error => {
+        reject(error)
+      }
+      reader.onload = data => {
+        resolve(data.target.result)
+      }
+    })
+  }
+  // 当 suspect='' 时，直接返回空数据
+  loadEmptyData() {
+    return new Promise((resolve, reject) => {
+      resolve(null)
+    })
+  }
 }

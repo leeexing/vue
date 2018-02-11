@@ -6,7 +6,9 @@
 
 	<link rel="shortcut icon" href="/favicon.ico" />
     <link rel="stylesheet" href="./css/the-Icons/css/iconfont.css">
-    <link rel="stylesheet" href="./css/drModle.css" />
+    <link rel="stylesheet" href="./css/animate.css">
+    <!-- <link rel="stylesheet" href="./css/drModle.css" /> -->
+    <link rel="stylesheet" href="./css/imgViewer.css">
 
     <script src="./js/jquery-2.2.3.min.js"></script>
     <script src="./js/nsts.cookieHelp.js"></script>
@@ -55,11 +57,11 @@
                 </div>
                 <p>图像描述：<span class="feature-desc">我说所有的酒 都不如你</span></p>
             </div>
-            <div class="map-info j-header-info">
+            <!-- <div class="map-info j-header-info">
                 <a class="u-btn j-map">插入tip</a>
-            </div>
+            </div> -->
         </div>
-        <div class="map-menu"></div>
+        <div class="map-menu j-map-menu"></div>
         <div class="m-oprate">
             <div class="btn-wrap f-fixl j-prevbtn">
                 <a class="btn btn-prev"></a>
@@ -101,7 +103,7 @@
     <div class="m-dr-footer">
         <div class="dr-oprate">
             <div class="oprate-left">
-                <div class="dr-angles">
+                <div class="dr-angles j-angles">
                     <a class="active">视角一</a>
                     <a>视角二</a>
                 </div>
@@ -132,6 +134,8 @@
             </div>
         </div>
     </div>
-    <script src="./js/training/drBusinessCtrl.js"></script>
+
+    <script src="./js/training/map.base.js"></script>
+    <script src="./js/training/drAction.js"></script>
 </body>
 </html>

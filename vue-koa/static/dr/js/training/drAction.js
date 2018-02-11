@@ -9,8 +9,18 @@ $(function(){
       })
     },
     mapBrowse() {
-      let mapBrowse = new DrViewer()
-      mapBrowse.showDR('http://10.13.62.25:92/fileroot/Image/CT10hx/CT/gunbarrel000025/0.png')
+      // let mapBrowse = new DrViewer()
+      // mapBrowse.showDR('3612549444941119490')
+      let mapBrowse = new MapPreviewDR()
+      mapBrowse.init('http://10.13.62.25:8070/api/DR/Query?PageNO=1&Limit=0&Offset=0')
+      // let mapMenu = new MapMenu({drinstance: mapBrowse})
+      // console.log(mapMenu)
+
+
+
+
+
+      /* mapBrowse.showDR('http://10.13.62.25:92/fileroot/Image/CT10hx/CT/gunbarrel000025/0.png')
       console.log('图库查看~')
       $.ajax({
         url: 'http://10.13.62.25:8070/api/DR/Query?types=None&PageNO=1&Limit=11&Offset=1',
@@ -20,27 +30,8 @@ $(function(){
         success (data) {
           console.log(data)
         }
-      })
+      }) */
 
-      // let reader = new FileReader()
-      // let xhr = new XMLHttpRequest()
-      // xhr.open('get', 'http://10.13.62.25:92/fileroot/Image/CT10hx/CT/gunbarrel000025/0.png', true)
-      // xhr.responseType = 'blob'
-      // xhr.onload = function () {
-      //   if (this.status === 200) {
-      //     // console.log(typeof this.response)
-      //     reader.readAsDataURL(this.response)
-      //   } else {
-      //     console.log(this.status)
-      //   }
-      // }
-      // xhr.send()
-      // reader.onerror = error => {
-      //   console.log(error)
-      // }
-      // reader.onload = data => {
-      //   console.log(data)
-      // }
     }
   }
   //
@@ -66,7 +57,6 @@ $(function(){
     if (search) {
       params = {}
       search.slice(1).split('&').forEach(item => {
-        // console.log(item)
         let arr = item.split('=')
         params[arr[0]] = arr[1]
       })

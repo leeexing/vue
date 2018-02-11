@@ -234,25 +234,28 @@ class MapPreviewDR extends TrainingBaseDR {
         let that = this;
         $('#lessontitle').text('DR图像查看');
         $('.j-header-info').css('display', 'flex');
-        this.$mapMenu = $('.map-menu');
-        this.$mapMenu.show();
-        $('.j-map').click(function () {
-            that.$mapMenu.css('transform', 'translateX(0)');
-        });
-    }
-    init(id) {
+        // this.$mapMenu = $('.map-menu');
+        // this.$mapMenu.show();
+      }
+      init(executeSql, initShowId=null) {
         let that = this;
-        this.LessonID = id;
-		this.Viewer.showDR()
-        // NSTS.NET.GET(APIURI + 'api/DR/DetailInfo?id=' + this.LessonID, null, function (data) {
-            // if (!data.success) {
-                // NSTS.Plugin.Alert.Error(data.error, function () {
-                    // that.btclose.click();
-                // });
-                // return;
-            // }
-            // that.IntoResShow(data.data);
-        // });
+        let mapMenu = new MapMenu({drinstance: this, executeSql, initShowId})
+        // mapMenu.mapOuter.find('li').eq(0).click()
+        // this.LessonID = id;
+        // $.ajax({
+        //   url: `http://10.13.62.25:8070/api/DR/Query?PageNO=1&Limit=0&Offset=0`,
+        //   headers: {
+        //     Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
+        //   },
+        //   success (data) {
+        //     console.log(data)
+        //     // that.initShow(data);
+
+        //   }
+        // })
+    }
+    initShow(id) {
+      this.Viewer.showDR(id)
     }
     IntoResShow(resinfo) {
         if (this.setResList(resinfo)) {
@@ -316,7 +319,7 @@ class MapPreviewDR extends TrainingBaseDR {
     }
 }
 
-/*  2 
+/*  2
     说明：DR 课件查看
 */
 class CourseWareDR extends TrainingBaseDR {
