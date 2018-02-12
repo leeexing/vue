@@ -1229,8 +1229,8 @@ class SqLiteCt {
     }
     init() {
       let _dbName = 'NstsFiles'
-      let _fileTable = this.tableName = 'File_MainStore_CT'
-      this.dbHelper = new SqLiteHelper({ _db: window.openDatabase(_dbName, this.version, 'website DB for CT', 1000 * 1024 * 1024)})
+      let _fileTable = this.tableName = 'File_MainStore'
+      this.dbHelper = new SqLiteHelper({ _db: window.openDatabase(_dbName, this.version, 'website DB for Image', 2000 * 1024 * 1024)})
       let tb = [{
         table: _fileTable,
         properties: [
@@ -1251,17 +1251,15 @@ class SqLiteCt {
       this.dbHelper.dropTable(this.tableName)
       console.log(`%c ${this.tableName}数据表 删除成功！！！`, 'background:#f00')
     }
-    getData(fileid, callback) {
+    fileIdIsExist(fileID, callback) {
+
+    }
+    getData_CT(fileid, callback) {
       console.warn(fileid)
       let that = this
-      this.dbHelper.query(`select ImgData, ImgDesData, SuspectCubeData, Density FROM File_MainStore_CT WHERE FileID =${fileid}`, function (e, reader) {
-        if (reader != null && reader.rows != null && reader.rows.length == 1) {
-          console.log(`%c 数据本地读取 ... `, 'background:#eb2f96;color:#fff')
-          let dbobj = reader.rows[0]
-          console.log(dbobj)
-          callback(Object.values(dbobj))
-        }
-        else {
+      this.dbHelper.query(`select ImgData, ImgDesData, SuspectCubeData, Density FROM File_MainStore WHERE FileID =${fileid}`, function (e, reader) {
+        // 还没有存过这条 fileID 的数据
+        if (reader !== null && reader.rows.length === 0) {
           console.log(`%c 数据远程下载 ... `, 'background:#000;color:#fff')
 
           $.ajax({
@@ -1287,9 +1285,71 @@ class SqLiteCt {
             }
           })
         }
+        // 说明存过这个 fileID 数据
+        if (reader != null && reader.rows !== null && reader.rows.length == 1) {
+          let dbobj = reader.rows[0]
+          // 没有 CT 相关的数据。因为 ImgData 数据没有
+          if (!dbobj[0]) {
+            $.ajax({
+              url: `http://10.13.62.25:8070/api/CT/${fileid}`,
+              headers: {
+                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
+              },
+              success (rawData) {
+                console.log(rawData)
+                that.fetchData(rawData.package.CT).then(data => {
+                  console.log(data)
+                  let updateData = []
+                  updateData.push([
+                    {'name': 'ImgData', 'value': data[0]},
+                    {'name': 'ImgDesData', 'value': data[1]},
+                    {'name': 'SuspectCubeData', 'value': data[2]},
+                    {'name': 'Density', 'value': data[3]}
+                  ])
+                  let whereData = []
+                  whereData.push([
+                    {'name': 'FileID', 'value': fileid}
+                  ])
+                  that.dbHelper.update(that.tableName, updateData, whereData)
+                  callback(data)
+                })
+              }
+            })
+          // 本地保存了需要查询的数据
+          } else {
+            console.log(`%c 数据本地读取 ... `, 'background:#eb2f96;color:#fff')
+            console.log(dbobj)
+            callback(Object.values(dbobj))
+          }
+        }
+        else {
+
+        }
       })
     }
-    fetchData(data) {
+    fetchData_CT(data) {
+      let fetchDataFns = []
+      // 视角主体数据
+      data.forEach(item => {
+        fetchDataFns.push(this.loadDataByFileReader(item.url))
+        if (item.suspect === '') {
+          fetchDataFns.push(this.loadEmptyData())
+        }
+      })
+      return new Promise((resolve, reject) => {
+        Promise.all(fetchDataFns)
+          .then(data => {
+            resolve(data)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    }
+    getData_DR() {
+
+    }
+    fetchData_DR(data) {
       let fetchDataFns = []
       // 视角主体数据
       data.forEach(item => {
@@ -1371,6 +1431,7 @@ class SqLiteDr {
     console.warn(fileid)
     let that = this
     this.dbHelper.query(`select Angle1, Suspect1, Angle2, Suspect2 FROM File_MainStore_DR WHERE FileID =${fileid}`, function (e, reader) {
+      console.log(reader)
       if (reader != null && reader.rows != null && reader.rows.length == 1) {
         console.log(`%c 数据本地读取 ... `, 'background:#eb2f96;color:#fff')
         let dbobj = reader.rows[0]
@@ -1391,7 +1452,7 @@ class SqLiteDr {
               console.log(data)
               let pushdata = []
               pushdata.push([
-                {'name': 'FileID', 'value': rawData.package.id},
+                {'name': 'FileID', 'value': fileid},
                 {'name': 'Angle1', 'value': data[0]},
                 {'name': 'Suspect1', 'value': data[1] || null},
                 {'name': 'Angle2', 'value': data[2] || null},
