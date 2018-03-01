@@ -3,8 +3,12 @@
 */
 "use strict"
 class TrainingBaseDR  {
-    constructor(options) {
-        this.options = $.extend({}, TrainingBaseDR.defaults, options || {});
+    constructor(options={}) {
+        this.options = {
+          showTool : true, // 是否需要显示工具条；默认显示，考题添加出可能不需要
+          callback: ''
+        }
+        Object.assign(this.options, options)
         this.initStart(); // 整体控制
     }
     initStart() {
@@ -210,17 +214,9 @@ class TrainingBaseDR  {
         }
     }
 }
-//配置一些基本的DR类参数
-TrainingBaseDR.defaults = {
-    showTool : true, // 是否需要显示工具条；默认显示，考题添加出可能不需要
-    callback: ''
-};
-
-
-/*
-*   下面为子类
-*/
-
+                          //////////////////////////////////////
+                          /////       下面为子类       /////////
+                          //////////////////////////////////////
 
 /*  1
     说明：DR图像库全屏查看
@@ -231,15 +227,14 @@ class MapPreviewDR extends TrainingBaseDR {
         this.initElement();
     }
     initElement() {
-        let that = this;
+        // let that = this;
         $('#lessontitle').text('DR图像查看');
         $('.j-header-info').css('display', 'flex');
         // this.$mapMenu = $('.map-menu');
         // this.$mapMenu.show();
       }
       init(executeSql, initShowId=null) {
-        let that = this;
-        let mapMenu = new MapMenu({drinstance: this, executeSql, initShowId})
+        this.mapMenu = new MapMenu({imgInstance: this, executeSql, initShowId})
         // mapMenu.mapOuter.find('li').eq(0).click()
         // this.LessonID = id;
         // $.ajax({
@@ -254,67 +249,45 @@ class MapPreviewDR extends TrainingBaseDR {
         //   }
         // })
     }
-    initShow(id) {
-      this.Viewer.showDR(id)
+    initShow(imgInfo) {
+      this.Viewer.showDR(imgInfo)
+      this.doSubClassThing(imgInfo)
     }
     IntoResShow(resinfo) {
         if (this.setResList(resinfo)) {
-            this.ResInfo = resinfo;
-            this.Viewer.isDanger = resinfo.isDanger;
-            this.angles = resinfo.angles;
-            this._show();
+            this.ResInfo = resinfo
+            this.Viewer.isDanger = resinfo.isDanger
+            this.angles = resinfo.angles
+            this._show()
         }
     }
-    doSubClassThing() {
-        this.showImgInfo(this.ResInfo);
-        this.checkPreNext();
-        this.preventDubHitFlag = true;
+    doSubClassThing(imgInfo) {
+        this.showImgInfo(imgInfo)
+        this.checkPreNext()
     }
     checkPreNext() {
-        let imgCount = +$('#tree .tree-anchor.active').parent().parent().data('imglength');
-        let $imgActiveIndex = $('#tree .tree-anchor.active').parent().index()+1;
-        if (imgCount == 1) {
-            this.btPrevWrap.hide();
-            this.btNextWrap.hide();
-        } else {
-            this.btPrevWrap.show();
-            this.btNextWrap.show();
-        }
-        if ($imgActiveIndex == 1) {
+        if (this.mapMenu.imgCount == 1) {
             this.btPrevWrap.hide()
-        } else if ($imgActiveIndex == imgCount) {
-            this.btNextWrap.hide();
+            this.btNextWrap.hide()
         } else {
-            this.btPrevWrap.show();
-            this.btNextWrap.show();
+          if (this.mapMenu.activeIndex === 0) {
+              this.btPrevWrap.hide()
+          } else if (this.mapMenu.activeIndex == this.mapMenu.imgCOunt) {
+              this.btNextWrap.hide()
+          } else {
+              this.btPrevWrap.show()
+              this.btNextWrap.show()
+          }
         }
     }
     prevImg() {
         if (this.Viewer.hasLoaded) {
-            var $imgActiveParent = $('#tree .tree-anchor.active').parent().parent();
-            var imgCount = +$('#tree .tree-anchor.active').parent().parent().data('imglength');
-            var $imgActive = $('#tree .tree-anchor.active').parent().index();
-            if ($imgActive >= 1) {
-                var nextIndex = $imgActive - 1;
-                var $treeAnchor = $imgActiveParent.find('li').eq(nextIndex).find('.tree-anchor');
-                $imgActiveParent.find('.tree-anchor').removeClass('active');
-                var resId = $treeAnchor.addClass('active').data('resid');
-                this.init(resId);
-            }
+          this.mapMenu.prevImgShow()
         }
     }
     nextImg() {
         if (this.Viewer.hasLoaded) {
-            var $imgActiveParent = $('#tree .tree-anchor.active').parent().parent();
-            var imgCount = +$('#tree .tree-anchor.active').parent().parent().data('imglength');
-            var $imgActive = $('#tree .tree-anchor.active').parent().index();
-            if ($imgActive < imgCount - 1) {
-                var nextIndex = $imgActive + 1;
-                var $treeAnchor = $imgActiveParent.find('li').eq(nextIndex).find('.tree-anchor');
-                $imgActiveParent.find('.tree-anchor').removeClass('active');
-                var resId = $treeAnchor.addClass('active').data('resid');
-                this.init(resId);
-            }
+          this.mapMenu.nextImgShow()
         }
     }
 }

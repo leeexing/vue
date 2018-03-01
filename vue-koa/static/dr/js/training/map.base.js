@@ -11,6 +11,7 @@ class MapMenu {
       url: ''
     }
     Object.assign(this.options, options)
+    this.imgData = null
     this.init()
   }
   init() {
@@ -23,6 +24,8 @@ class MapMenu {
       },
       success (data) {
         console.log(data)
+        that.imgData = data.package
+        that.imgCount = data.package.length
         that.initElement(data.package)
         that.attachEvent()
         that.initShow()
@@ -64,14 +67,30 @@ class MapMenu {
       that.mapOuter.removeClass('fadeOutRight').addClass('fadeInRight')
       $(this).removeClass('fadeInDownBig').addClass('fadeOutUp')
     })
-
+    // 点击图像菜单
     this.mapOuter.on('click', 'li', function(e) {
       let id = $(this).data('id')
       console.log(id)
+      let index = that.activeIndex = $(this).index()
+      let imgRenderObj = that.imgData[index]
+      console.log(imgRenderObj)
       if (!$(this).hasClass('active')) {
         $(this).addClass('active').siblings().removeClass('active')
-        that.options.drinstance.initShow(id)
+        that.options.imgInstance.initShow(imgRenderObj)
       }
     })
+  }
+  prevImgShow() {
+    this.activeIndex = Math.max(0, --this.activeIndex)
+    this.mapOuter.find(`li:eq(${this.activeIndex})`).click()
+    return this.activeIndex === 0
+  }
+  nextImgShow() {
+    this.activeIndex = Math.min(this.imgCount, ++this.activeIndex)
+    this.mapOuter.find(`li:eq(${this.activeIndex})`).click()
+    return this.activeIndex === this.imgCount
+  }
+  loadMore(url) {
+    //
   }
 }

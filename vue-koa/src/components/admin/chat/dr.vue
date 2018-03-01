@@ -40,7 +40,8 @@ export default {
       this.isShow = !this.isShow
       // this.src = '../../src/assets/xxx.html'
       // this.src = '/static/dr/index.html?business=INSERT_TIP&paperID=2&activeID=3'
-      this.src = '/static/dr/index.html?business=MAP_BROWSE&paperID=2&activeID=3'
+      this.src = '/static/dr/DR_base.html?business=MAP_BROWSE&paperID=2&activeID=3'
+      // this.src = '/static/dr/CT_base.html?business=MAP_BROWSE&paperID=2&activeID=3'
       this.$refs.nstswrap.fullScreen()
     },
     toggleIsShow (val) {

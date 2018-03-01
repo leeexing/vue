@@ -1,5 +1,7 @@
 $(function(){
-
+  /**
+   * DR 图像控制层
+   */
   const Business = {
     insertTip() {
       let DRPreview = new MapPreviewDR();

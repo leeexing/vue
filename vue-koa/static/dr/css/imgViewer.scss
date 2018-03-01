@@ -832,13 +832,28 @@ body {
   说明：DR 图像 内容显示区域
 */
 .m-content .dr-canvas{
- flex:auto;
- display:flex;
- justify-content: center;
+  position: relative;
+  flex:auto;
+  display:flex;
+  justify-content: center;
+}
+.m-content .dr-entity {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+.m-content .dr-entity img {
+  max-width: 100%;
+  max-height: 100%;
 }
 .m-content .dr-canvas div {
   position:relative;
-  // align-self:center;
   -webkit-user-select:none;
 }
 .m-content .dr-canvas .active:after {
@@ -891,26 +906,38 @@ body {
 .m-dr-footer .dr-oprate > div:nth-of-type(2){
   width:60%;
 }
-.m-dr-footer .dr-angles {
-  float:left;
+.m-dr-footer .oprate-left .oprate-left {
+  display: flex;
+  flex-direction: column;
+}
+.m-dr-footer .oprate-left .angle-wrap {
+  overflow: hidden;
+}
+.m-dr-footer .oprate-left .entity-wrap {
+  display: none;
+  margin-top: 20px;
 }
 .m-dr-footer .oprate-left a {
   display:inline-block;
-  color: #fff;
-}
-.m-dr-footer .dr-angles a {
   margin-right:5px;
   padding: 10px 15px;
   background:#aaa;
   border-radius:2px;
   font-size: 14px;
+  color: #fff;
   cursor:pointer;
+  &:hover {
+    opacity:.8;
+  }
+  &.active {
+    background:#00bcd4;
+  }
+  &.noactive {
+    background: #aaa;
+  }
 }
-.m-dr-footer .dr-angles a:hover {
-  opacity:.8;
-}
-.m-dr-footer .dr-angles a.active {
-  background:#00bcd4;
+.m-dr-footer .dr-angles {
+  float:left;
 }
 .m-dr-footer .dr-amplify {
   float:right;

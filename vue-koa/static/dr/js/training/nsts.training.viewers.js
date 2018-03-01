@@ -8,405 +8,415 @@
  *
  */
 class CtViewer {
-    constructor(options) {
-        this.options = Object.assign({}, CtViewer.default, options || {});
-        this.init();
+    constructor(options={}) {
+        this.options = {
+          DrWidth: 400,
+          DrHeight: 400,
+          DrContainerID: 'canvasdr',// DR图像容器ID
+          CtWidth: 600,
+          CtHeight: 600,
+          CtContainerID: 'container',
+          SliceWidth: 400,
+          SliceHeight: 400,
+          SliceContainerID: 'canvasslice',
+          showDR: true, // 是否显示DR图像
+          showSlice: true, // 是否显示切片图像
+          showSusobj: true, // 是否"突出显示危险品"
+          slicePlaneVisible: true, // 是否显示切线平面
+          sizeIndexDefault: 6, //摄像头初始化时的放大比例
+          defaultTransparency: 0.33, //默认CT透明度值
+          callback: null
+        }
+        Object.assign(this.options, options)
+        this.init()
     }
     init() {
-        this.initSqlLite();
-        this.initElement();
-        this.initToolsBtnEvent();
+        this.initSqlLite()
+        this.initElement()
+        this.initToolsBtnEvent()
     }
     initElement() {
         /*
         drinstance、slice 渲染变量
         */
-        this.shaderA = 'raw'; //第一个参数。默认就是表面增强
-        this.shaderB = 'standard'; // 第二个参数。默认是标准
-        this.shaderC = 'default'; // 第三个参数。默认就是真彩色
-        this.isDanger = false;  // 危险品和包裹显示 处理不同
-        this.hasLoaded = false;  // 判断图像是否加载完成的字段
-        this.firstRender = true; // 第一次渲染
-        this.selectTipResult = null;
-        this.isTipSelected = false;
-        this.showSusobj_byUser = true; // 用户选择是否显示，markBtn控制；统一视角一二的切换
+        this.shaderA = 'raw' //第一个参数。默认就是表面增强
+        this.shaderB = 'standard' // 第二个参数。默认是标准
+        this.shaderC = 'default' // 第三个参数。默认就是真彩色
+        this.isDanger = false  // 危险品和包裹显示 处理不同
+        this.hasLoaded = false  // 判断图像是否加载完成的字段
+        this.firstRender = true // 第一次渲染
+        this.selectTipResult = null
+        this.isTipSelected = false
+        this.showSusobj_byUser = true // 用户选择是否显示，markBtn控制；统一视角一二的切换
         /*
         页面元素
         */
-        this.body = $('body');
-        this.loadingLayer = $('#loading');
-        this.curOperateName = $('.j-cur-operate');
-        this.zoomIndex = $('.j-zoom');
-        this.btns = $('.j-tools a');
-        this.coloursBtn = $('.colours');
-        this.markBtn = $('.mark');
-        this.$module3DContainer = $('#container');
+        this.body = $('body')
+        this.loadingLayer = $('#loading')
+        this.curOperateName = $('.j-cur-operate')
+        this.zoomIndex = $('.j-zoom')
+        this.btns = $('.j-tools a')
+        this.coloursBtn = $('.colours')
+        this.markBtn = $('.mark')
+        this.$module3DContainer = $('#container')
         /*
         3D图像初始化
         */
-        Module3D.Rendering.ShaderPath = './js/wgl/data/';
-        Module3D.Rendering.ColorTablePath = './js/wgl/data/color_table_coded.png';
-        Module3D.Rendering.NoiseTexturePath = './js/wgl/data/random_noise.png';
-        Module3D.DRColorTableRootDir = './js/wgl/data/';
+        Module3D.Rendering.ShaderPath = './js/wgl/data/'
+        Module3D.Rendering.ColorTablePath = './js/wgl/data/color_table_coded.png'
+        Module3D.Rendering.NoiseTexturePath = './js/wgl/data/random_noise.png'
+        Module3D.DRColorTableRootDir = './js/wgl/data/'
 
-        Module3D.Initialize(this.options.CtContainerID, this.options.CtWidth, this.options.CtHeight);
-        Module3D.Rendering.RenderingMode = true; //一直刷新状态/拖拽时刷新
-        Module3D.Rendering.UseCameraSlerp = true; // 转向平滑过度
-        Module3D.Rendering.DisableSHShade(false); // 初始化 表面增强
-        // Module3D.Rendering.ToAbove(); // 上视角
-        Module3D.Rendering.Draw();
-        Module3D.Rendering.SetBackgroundColor(255, 255, 255);
-        Module3D.Rendering.CurCamera.position.set(0, 0, 1.1); // 设置摄像机的空间位置
-        //Module3D.Rendering.SetCameraZoom(this.options.sizeIndexDefault); //摄像机初始放大比
-        Module3D.Rendering.SetSlicePlaneVisible(this.options.slicePlaneVisible); // 3D平板切片显示.默认显示
+        Module3D.Initialize(this.options.CtContainerID, this.options.CtWidth, this.options.CtHeight)
+        Module3D.Rendering.RenderingMode = true //一直刷新状态/拖拽时刷新
+        Module3D.Rendering.UseCameraSlerp = true // 转向平滑过度
+        Module3D.Rendering.DisableSHShade(false) // 初始化 表面增强
+        // Module3D.Rendering.ToAbove() // 上视角
+        Module3D.Rendering.Draw()
+        Module3D.Rendering.SetBackgroundColor(255, 255, 255)
+        Module3D.Rendering.CurCamera.position.set(0, 0, 1.1) // 设置摄像机的空间位置
+        //Module3D.Rendering.SetCameraZoom(this.options.sizeIndexDefault) //摄像机初始放大比
+        Module3D.Rendering.SetSlicePlaneVisible(this.options.slicePlaneVisible) // 3D平板切片显示.默认显示
 
-        Module3D.Rendering.SetVolumeLoadedCallback(this.loadingEnd.bind(this)); // 图像加载完成后执行
+        Module3D.Rendering.SetVolumeLoadedCallback(this.loadingEnd.bind(this)) // 图像加载完成后执行
         Module3D.Rendering.SetMouseWheelCallback(() => { // 监听"3D图像"鼠标滚轮
-            let zoomValue = 16 - Module3D.Rendering.GetCameraZoomIndex();
-            this.zoomIndex.text(zoomValue.toFixed(1));
-        });
+            let zoomValue = 16 - Module3D.Rendering.GetCameraZoomIndex()
+            this.zoomIndex.text(zoomValue.toFixed(1))
+        })
         Module3D.Rendering.SetManualPickingCheckingFunction(() => { // 3D 手动选择嫌疑物后的回调
-            let isSelectedBox = Module3D.Rendering.IsSelectedBoxContainTipPart();
+            let isSelectedBox = Module3D.Rendering.IsSelectedBoxContainTipPart()
             this.setSelectTipResult(isSelectedBox[0])
-        });
+        })
         if (this.options.showDR) {
-            this.initDrElement();
+            this.initDrElement()
         }
     }
     initDrElement() {
         /*
         DR 初始化
         */
-        this.$anglesWrap = $('.dr-angles');
-        this.$drContainer = $(`#${this.options.DrContainerID}`);
-        this.$sliceContainer = $(`#${this.options.SliceContainerID}`);
+        this.$anglesWrap = $('.dr-angles')
+        this.$drContainer = $(`#${this.options.DrContainerID}`)
+        this.$sliceContainer = $(`#${this.options.SliceContainerID}`)
 
-        this.drinstance = new Module3D.DRImageInstance();
-        this.drinstance.setScaleMinAndMax(0.1, 4); // 缩放比例最大最小值
+        this.drinstance = new Module3D.DRImageInstance()
+        this.drinstance.setScaleMinAndMax(0.1, 4) // 缩放比例最大最小值
         this.drinstance.setCallbackWhenLoaded(() => { // DR图像加载完成后
-            this.drLoadEnding();
-        });
+            this.drLoadEnding()
+            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
+        })
         this.drinstance.setMouseWheelCallback(() => { // DR缩放系数
-            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1));
-        });
-        this.drinstance.showSusobj(this.options.showSusobj); //练习时不让危险品突出显示
+            this.zoomIndex.text(this.drinstance.getZoomIndex().toFixed(1))
+        })
+        this.drinstance.showSusobj(this.options.showSusobj) //练习时不让危险品突出显示
 
         this.drinstance.setMMSelectCallback((data) => {
-            this.setSelectTipResult(data);
-        });
+            this.setSelectTipResult(data)
+        })
 
         /*
         Slice 初始化
         */
-        this.slinstance = new Module3D.DRImageInstance(true);
-        this.slinstance.setScaleMinAndMax(0.1, 4);
-        this.slinstance.showSusobj(this.options.showSusobj);//练习时不让危险品突出显示
+        this.slinstance = new Module3D.DRImageInstance(true)
+        this.slinstance.setScaleMinAndMax(0.1, 4)
+        this.slinstance.showSusobj(this.options.showSusobj)//练习时不让危险品突出显示
         this.slinstance.setCallbackWhenLoaded(() => { // 加载完成的回调；切片默认为“125”
-            this.slinstance.setSliceIndex(125);
-            this.slinstance.switchToTipImage(false);
-            this.slinstance.showSusobj(this.options.showSusobj);
-            this.SliceZeffRenderCB && this.SliceZeffRenderCB();
-        });
+            this.slinstance.setSliceIndex(125)
+            this.slinstance.switchToTipImage(false)
+            this.slinstance.showSusobj(this.options.showSusobj)
+            this.SliceZeffRenderCB && this.SliceZeffRenderCB()
+        })
 
-        this.$sliceInputBar = $('#sliceinput');
-        this.initDrEvent();
-        this.initSliceEvent();
+        this.$sliceInputBar = $('#sliceinput')
+        this.initDrEvent()
+        this.initSliceEvent()
     }
     initDrEvent() {
-        let that = this;
+        let that = this
         this.drinstance.setDbClickCallback(function drDoubleClick(data) { // 双击DR
-            let x = parseInt(data[0] * 255);
-            that.$sliceInputBar.val(x);
-            that.setSlicePiece(x);
-        });
+            let x = parseInt(data[0] * 255)
+            that.$sliceInputBar.val(x)
+            that.setSlicePiece(x)
+        })
     }
     initSliceEvent() {
-        let that = this;
-        /*
-        slice 密度与原子序数
-        */
-        this.$densityAve = $('.j-density-ave'); // 平均密度原子序数
-        this.$atomAve = $('.j-atom-ave');
-        this.$density = $('.j-density'); // 密度与原子系数
-        this.$atom = $('.j-atom');
+        let that = this
+        // slice 密度与原子序数
+        this.$densityAve = $('.j-density-ave') // 平均密度原子序数
+        this.$atomAve = $('.j-atom-ave')
+        this.$density = $('.j-density') // 密度与原子系数
+        this.$atom = $('.j-atom')
         this.slinstance.setMMSelectCallback((data) => {
-            console.log(`%c 平均密度和原子序数：${data} `, 'background:#000;color:#fff');
-            this.$densityAve.text(data[0][0].toFixed(2));
-            this.$atomAve.text(data[0][1].toFixed(2));
-            this.setSelectTipResult(data[1]);  // 用于判断选择嫌疑物
-        });
+            console.log(`%c 平均密度和原子序数：${data} `, 'background:#000color:#fff')
+            this.$densityAve.text(data[0][0].toFixed(2))
+            this.$atomAve.text(data[0][1].toFixed(2))
+            this.setSelectTipResult(data[1])  // 用于判断选择嫌疑物
+        })
         this.slinstance.setMouseMoveCallback((data) => {
-            this.$density.text(data[0].toFixed(2));
-            this.$atom.text(data[1].toFixed(2));
-        });
-        /*
-        slice 切片位置
-        */
+            this.$density.text(data[0].toFixed(2))
+            this.$atom.text(data[1].toFixed(2))
+        })
+        // slice 切片位置
         if (this.$sliceInputBar.length != 0) {
             this.$sliceInputBar.on('input', function () {
-                let x = parseInt($(this).val());
-                that.setSlicePiece(x);
+                let x = parseInt($(this).val())
+                that.setSlicePiece(x)
             })
         }
     }
     setSelectTipResult(data) {
-        console.log(`%c 标记嫌疑物： ${data} `, 'background:#f90;color:#fff');
-        this.selectTipResult = data;
-        this.isTipSelected = true;
+        console.log(`%c 标记嫌疑物： ${data} `, 'background:#f90;color:#fff')
+        this.selectTipResult = data
+        this.isTipSelected = true
     }
     setSlicePiece(piecePos) {
-        let pieceValue = (piecePos / 255).toFixed(3);
-        this.slinstance.setSliceIndex(piecePos);
-        this.drinstance.setSliceIndex(piecePos);
-        this.$sliceInputBar.css('background-size', pieceValue * 100 + '% 100%');
-        Module3D.Rendering.SetSlicePosZ(pieceValue); // 3d切平面的函数
-        this.reDraw3D();
+        let pieceValue = (piecePos / 255).toFixed(3)
+        this.slinstance.setSliceIndex(piecePos)
+        this.drinstance.setSliceIndex(piecePos)
+        this.$sliceInputBar.css('background-size', pieceValue * 100 + '% 100%')
+        Module3D.Rendering.SetSlicePosZ(pieceValue) // 3d切平面的函数
+        this.redraw3D()
     }
-    reDraw3D() {
-        Module3D.Rendering.ReDraw();
-        window.setTimeout('Module3D.Rendering.StopRendering', 100);
+    redraw3D() {
+        Module3D.Rendering.ReDraw()
+        window.setTimeout('Module3D.Rendering.StopRendering', 100)
     }
     drLoadEnding() {
-        this.hasLoaded = true;
-        this.loadingLayer.hide();
-        this.$drContainer.show();
-        this.drinstance.switchToTipImage(this.isDanger);
-        this.drinstance.setSliceLineVisible(true); // 切换线的显示状态
-        let index = +this.$sliceInputBar.val();
-        this.drinstance.setSliceIndex(index.toFixed(2)); // 默认值和"切片"的相同:125
-        this.drinstance.restoreOrigialPos();
-        this.drinstance.showSusobj(this.options.showSusobj && this.showSusobj_byUser);
-        this.loadEndCallback && this.loadEndCallback();
+        this.hasLoaded = true
+        this.loadingLayer.hide()
+        this.$drContainer.show()
+        this.drinstance.switchToTipImage(this.isDanger)
+        this.drinstance.setSliceLineVisible(true) // 切换线的显示状态
+        let index = +this.$sliceInputBar.val()
+        this.drinstance.setSliceIndex(index.toFixed(2)) // 默认值和"切片"的相同:125
+        this.drinstance.restoreOrigialPos()
+        this.drinstance.showSusobj(this.options.showSusobj && this.showSusobj_byUser)
+        this.loadEndCallback && this.loadEndCallback()
     }
     loadingStart() {
-        this.loadingLayer.show();
-        this.hasLoaded = false;
-        this.$module3DContainer.hide(); // 先隐藏canvas的包裹层,加载完成后再显示
+        this.loadingLayer.show()
+        this.hasLoaded = false
+        this.$module3DContainer.hide() // 先隐藏canvas的包裹层,加载完成后再显示
         if (this.options.showDR) {
-            this.$sliceContainer.hide();
-            this.$drContainer.hide(); // DR容器也隐藏
+            this.$sliceContainer.hide()
+            this.$drContainer.hide() // DR容器也隐藏
         }
     }
     loadingEnd() {
         if (!this.hasDrImage) {
-            this.loadingLayer.hide();
+            this.loadingLayer.hide()
         }
-        this.$module3DContainer.show();
-        this.$sliceContainer && this.$sliceContainer.show();
-        this.options.callback && this.options.callback();
+        this.$module3DContainer.show()
+        this.$sliceContainer && this.$sliceContainer.show()
+        this.options.callback && this.options.callback()
     }
-    initShow(pinfo) {
-        let that = this;
-        if (pinfo == null || pinfo == undefined || pinfo.CTID == undefined || pinfo.CTID <= 0) {
-            NSTS.Plugin.Alert.Error('参数无效');
-            return;
-        }
-        this.loadingStart();
-        this.sql.getData(pinfo.CTID, this.showModule3D.bind(this)); //显示 CT & slice
-        if (pinfo.TIPID != undefined && pinfo.TIPID > 0) { // 显示 TIP
-            this.sql.getData(pinfo.TIPID, this.showTip.bind(this));
-        }
+    initShow(imgInfo) {
+        // this.loadingStart()
+        let that = this
+        this.activeImgInfo = imgInfo
+
+        this.sql.getData_CT(imgInfo, this.showModule3D.bind(this)) //显示 CT & slice
+        // if (pinfo.TIPID != undefined && pinfo.TIPID > 0) { // 显示 TIP
+        //     this.sql.getData(pinfo.TIPID, this.showTip.bind(this))
+        // }
         /*
         dr 初始化
         */
         if (this.options.showDR) {
-            let drids = []; // 处理获取drids
-            if (pinfo.DRIDS !== null && pinfo.DRIDS.length > 0) {
-                let angleName = ['View 1', 'View 2', 'View 3', 'View 4'];
-                let activeClass = '';
-                let html = '';
-                for (let i = 0; i < pinfo.DRIDS.length; i++) {
-                    drids.push(pinfo.DRIDS[i].fileID);
-                    activeClass = (i === 0 ) ? 'active' : '';
-                    html += `<a data-fileid="${pinfo.DRIDS[i].fileID}" class="${activeClass}">${angleName[i]}</a>`;
-                }
-                this.$anglesWrap.html(html);
-                this.$anglesWrap.find('a').click(function () {
-                    let fileID = $(this).data('fileid');
-                    if (!$(this).hasClass('active')) {
-                        $(this).addClass('active').siblings().removeClass('active');
-                        that.showDR(fileID);
-                    }
-                });
-            }
-            else { //如果没有DR图像，清除上一幅遗留下来的 视角一、视角二 标签
-                this.$drContainer.hide();
-                this.$anglesWrap.empty();
-            }
-            pinfo.DRIDS = drids;
-            if (pinfo.DRIDS.length > 0) { // 显示 DR;先判断图像中 是否有 dr 显示信息
-                this.hasDrImage = true;
-                this.FirstDrId = pinfo.DRIDS[0];
-            } else {
-                this.hasDrImage = false;
-            }
+          let anglesHTML = ''
+          imgInfo.dr.forEach((angle, index) => {
+            let isActive = index == 0 ? 'active' : ''
+            let indexName = index == 0 ? '视角一' : '视角二'
+            anglesHTML += `<a class="${isActive}">${indexName}</a>`
+          })
+          this.$anglesWrap.html(anglesHTML)
         }
     }
-    showModule3D(pobj) {
-        let that = this;
-        console.log('%c Show 3D ... ', 'background:#f90;color:#fff');
-        if (pobj.Suspects) {
-            Module3D.Rendering.SetVolumeDataBase64Content(pobj.ID + '.png', pobj.B64, pobj.TXT, pobj.Suspects);
-        } else {
-            Module3D.Rendering.SetVolumeDataBase64Content(pobj.ID + '.png', pobj.B64, pobj.TXT);
+    showModule3D(ctRenderData) {
+        let that = this
+        console.log('%c Show 3D ... ', 'background:#f90;color:#fff')
+        console.log(ctRenderData)
+        if (ctRenderData[2] !== null) {
+            // Module3D.Rendering.SetVolumeDataBase64Content(pobj.ID + '.png', pobj.B64, pobj.TXT, pobj.Suspects)
+            Module3D.Rendering.SetVolumeDataBase64Content('ct.png', ctRenderData[0], ctRenderData[1], ctRenderData[2])
+          } else {
+            // Module3D.Rendering.SetVolumeDataBase64Content(pobj.ID + '.png', pobj.B64, pobj.TXT)
+            Module3D.Rendering.SetVolumeDataBase64Content('ct.png', ctRenderData[0], ctRenderData[1])
         }
         if (!this.firstRender) {
-            this.reset3D(); // 重置之前的图像操作
+            this.reset3D() // 重置之前的图像操作
         } else {
-            Module3D.Rendering.DisplaySuspectObject(this.options.showSusobj); // 突出显示嫌疑物
-            Module3D.Rendering.SetCameraZoom(this.options.sizeIndexDefault); // 摄像机初始放大比
-            Module3D.Rendering.ToAbove(); // 上视角
-            this.firstRender = false;
+            Module3D.Rendering.DisplaySuspectObject(this.options.showSusobj) // 突出显示嫌疑物
+            Module3D.Rendering.SetCameraZoom(this.options.sizeIndexDefault) // 摄像机初始放大比
+            Module3D.Rendering.ToAbove() // 上视角
+            this.firstRender = false
         }
-        /*
-        dr、slice 显示
-        */
+
+        // dr、slice 显示
         if (this.options.showDR) {
-            this.slinstance.loadTexture('canvasslice', pobj.B64, this.options.SliceWidth, this.options.SliceHeight);
-            if (!!pobj.Zeff) {
-                this.SliceZeffRenderCB = function () {
-                    that.slinstance.loadZeff(pobj.Zeff);
+            this.slinstance.loadTexture('canvasslice', ctRenderData[0], this.options.SliceWidth, this.options.SliceHeight)
+            if (ctRenderData[3] !== null) {
+                this.SliceZeffRenderCB = function sliceDensity() {
+                    that.slinstance.loadZeff(ctRenderData[3])
                 }
             } else {
-                this.SliceZeffRenderCB = null;
+                this.SliceZeffRenderCB = null
             }
-            this.displayDR(); //DR显示。放在3d开始渲染后再显示，避免两个同时请求数据显示，DR总是快一点
+            this.initShowDR() //DR显示。放在3d开始渲染后再显示，避免两个同时请求数据显示，DR总是快一点
         }
     }
-    displayDR() {
-        if (this.hasDrImage) {
-            this.showDR(this.FirstDrId)
-        }
+    initShowDR() {
+        // if (this.hasDrImage) {
+        //     this.showDR(this.FirstDrId)
+        // }
+        this.activeAngleIndex = 0
+        this.sql.getData_DR(this.activeImgInfo, this.showDR.bind(this))
     }
-    showDR(fileID) {
-        this.sql.getData(fileID, this.renderDR.bind(this))
+    showDR(data) {
+      this.drRenderingData = data
+      this.renderDR()
     }
     renderDR(renderObj) {
-        console.log('%c Show DR ... ', 'background:#00bcd4;color:#fff');
-        this.drinstance.loadTexture(this.options.DrContainerID, renderObj.B64, this.options.DrWidth, this.options.DrHeight);
+        console.log('%c Show DR ... ', 'background:#00bcd4;color:#fff')
+        this.drinstance.loadTexture(this.options.DrContainerID, this.drRenderingData[this.activeAngleIndex], this.options.DrWidth, this.options.DrHeight)
+        if (this.drRenderingData[this.activeAngleIndex + 1] !== null) {
+          this.drinstance.loadTextureApp(this.drRenderingData[this.activeAngleIndex + 1])
+        }
     }
     reset3D() {
-        Module3D.Rendering.SetBackgroundColor(255, 255, 255);
-        Module3D.Rendering.CameraControls.enabled = true; //启用右键
-        Module3D.Rendering.SetVolumeTransferTable(Module3D.Rendering.IMG_PROC_PARA.APIP_IC_COLORIZE); //默认真彩色
-        Module3D.Rendering.ToAbove(); //上视角
-        Module3D.Rendering.DisableSHShade(false); // 表面增强
-        Module3D.Rendering.EnableEdge(false); // 边缘增强
-        Module3D.Rendering.SetAlpha(this.options.defaultTransparency); // 透明度
-        Module3D.Rendering.SetClipPlaneZ(0, false); // 剪裁
-        Module3D.Rendering.SetCameraZoom(this.options.sizeIndexDefault); // 摄像机缩放系数
-        Module3D.Rendering.ClearAllBoxButRiskyObject(); // 清除除了确定包围线框的所有线框
-        Module3D.Rendering.SetSlicePosZ(0.488); // 3d切平面的函数
-        Module3D.Rendering.DisplaySuspectObject(this.options.showSusobj); // 突出显示嫌疑物
+        Module3D.Rendering.SetBackgroundColor(255, 255, 255)
+        Module3D.Rendering.CameraControls.enabled = true //启用右键
+        Module3D.Rendering.SetVolumeTransferTable(Module3D.Rendering.IMG_PROC_PARA.APIP_IC_COLORIZE) //默认真彩色
+        Module3D.Rendering.ToAbove() //上视角
+        Module3D.Rendering.DisableSHShade(false) // 表面增强
+        Module3D.Rendering.EnableEdge(false) // 边缘增强
+        Module3D.Rendering.SetAlpha(this.options.defaultTransparency) // 透明度
+        Module3D.Rendering.SetClipPlaneZ(0, false) // 剪裁
+        Module3D.Rendering.SetCameraZoom(this.options.sizeIndexDefault) // 摄像机缩放系数
+        Module3D.Rendering.ClearAllBoxButRiskyObject() // 清除除了确定包围线框的所有线框
+        Module3D.Rendering.SetSlicePosZ(0.488) // 3d切平面的函数
+        Module3D.Rendering.DisplaySuspectObject(this.options.showSusobj) // 突出显示嫌疑物
 
-        this.reDraw3D();
+        this.redraw3D()
 
-        this.zoomIndex.text((16 - this.options.sizeIndexDefault).toFixed(1));
-        this.body.removeClass('inverse');
-        this.btns.removeClass('active');
-        this.$opacityInputWrap.hide();
-        this.$clipInputWrap.hide();
-        this.alphaValue = 0.33; //键盘监听的透明度值
-        this.clipPlaneValue = 0;
-        this.isAlphaOpen = false;
-        this.selectTipResult = null;
-        this.isTipSelected = false;
-        this.showSusobj_byUser = true;
+        this.zoomIndex.text((16 - this.options.sizeIndexDefault).toFixed(1))
+        this.body.removeClass('inverse')
+        this.btns.removeClass('active')
+        this.$opacityInputWrap.hide()
+        this.$clipInputWrap.hide()
+        this.alphaValue = 0.33 //键盘监听的透明度值
+        this.clipPlaneValue = 0
+        this.isAlphaOpen = false
+        this.selectTipResult = null
+        this.isTipSelected = false
+        this.showSusobj_byUser = true
 
         if (!this.options.showSusobj) {
-            this.coloursBtn.addClass('active');
-            this.surfaceBtn.addClass('active');
-            this.curOperateName.html(`<span>真彩色</span>+<span>表面增强</span>`);
+            this.coloursBtn.addClass('active')
+            this.surfaceBtn.addClass('active')
+            this.curOperateName.html(`<span>真彩色</span>+<span>表面增强</span>`)
         } else {
-            this.coloursBtn.addClass('active');
-            this.surfaceBtn.addClass('active');
-            this.markBtn.addClass('active');
-            this.curOperateName.html(`<span>真彩色</span>+<span>表面增强</span>+<span>突出显示嫌疑物</span>`);
+            this.coloursBtn.addClass('active')
+            this.surfaceBtn.addClass('active')
+            this.markBtn.addClass('active')
+            this.curOperateName.html(`<span>真彩色</span>+<span>表面增强</span>+<span>突出显示嫌疑物</span>`)
         }
         /*
         dr、slice
         */
         if (this.options.showDR) {
-            this.drinstance.restoreOrigialPos();
-            this.drinstance.setInverse(false);
-            this.drinstance.setSlicePosX(0.488);
-            this.drinstance.showSusobj(this.options.showSusobj);
+            this.drinstance.restoreOrigialPos()
+            this.drinstance.setInverse(false)
+            this.drinstance.setSlicePosX(0.488)
+            this.drinstance.showSusobj(this.options.showSusobj)
 
-            this.slinstance.setSliceIndex(125);
-            this.$sliceInputBar.val(125).css('background-size', '50% 100%');
-            this.slinstance.restoreOrigialPos();
-            this.slinstance.setInverse(false);
-            this.slinstance.showSusobj(this.options.showSusobj);
+            this.slinstance.setSliceIndex(125)
+            this.$sliceInputBar.val(125).css('background-size', '50% 100%')
+            this.slinstance.restoreOrigialPos()
+            this.slinstance.setInverse(false)
+            this.slinstance.showSusobj(this.options.showSusobj)
 
-            this.shaderA = 'raw';
-            this.shaderB = 'standard';
-            this.shaderC = 'default';
+            this.shaderA = 'raw'
+            this.shaderB = 'standard'
+            this.shaderC = 'default'
 
-            this.setShader();
+            this.setShader()
         }
     }
     setShader() {
-        console.log(`%c DR 渲染模式： ${this.shaderA} ${this.shaderB} ${this.shaderC} `, 'background:#00bcd4;color:#eee;padding: 2px;border-radius: 2px');
-        this.drinstance.setShader(this.shaderA, this.shaderB, this.shaderC);
-        this.drinstance.refreshDisplay();
-        this.slinstance.setShader(this.shaderA, this.shaderB, this.shaderC);
+        console.log(`%c DR 渲染模式： ${this.shaderA} ${this.shaderB} ${this.shaderC} `, 'background:#00bcd4;color:#eee;padding: 2px;border-radius: 2px')
+        this.drinstance.setShader(this.shaderA, this.shaderB, this.shaderC)
+        this.drinstance.refreshDisplay()
+        this.slinstance.setShader(this.shaderA, this.shaderB, this.shaderC)
     }
     stopRender() {
-        Module3D.Rendering.StopRendering();
-        Module3D.Rendering.CurRenderer.forceContextLoss();
-        Module3D.Rendering.CurRenderer.context = null;
-        Module3D.Rendering.CurRenderer.domElement = null;
-        Module3D.Rendering.CurRenderer = null;
+        Module3D.Rendering.StopRendering()
+        Module3D.Rendering.CurRenderer.forceContextLoss()
+        Module3D.Rendering.CurRenderer.context = null
+        Module3D.Rendering.CurRenderer.domElement = null
+        Module3D.Rendering.CurRenderer = null
     }
     setTip(tipid) {
         if (tipid === null || tipid === undefined) {
-            NSTS.Plugin.Alert.Error('参数非法');//参数非法
-            return;
+            NSTS.Plugin.Alert.Error('参数非法')//参数非法
+            return
         }
         if (parseInt(tipid, 10) > 0) {
-            this.sql.getData(tipid, this.showTip.bind(this));
+            this.sql.getData(tipid, this.showTip.bind(this))
         } else {
-            Module3D.Rendering.RestoreVolume();
-            Module3D.Rendering.DrawJustOnce();
+            Module3D.Rendering.RestoreVolume()
+            Module3D.Rendering.DrawJustOnce()
         }
     }
     showTip(obj) {
         console.log('%c tip 正在进行装载 ...','background: #5b0;color:#fff')
-        Module3D.Rendering.SetTipDataBase64Content(obj.ID + '.png', obj.B64, obj.TXT);
+        Module3D.Rendering.SetTipDataBase64Content(obj.ID + '.png', obj.B64, obj.TXT)
         if (obj && obj.TipX) {
-            Module3D.Rendering.SetTipOffset(obj.TipX, obj.TipY, obj.TipZ);
+            Module3D.Rendering.SetTipOffset(obj.TipX, obj.TipY, obj.TipZ)
         } else {
-            // Module3D.Rendering.SetTipOffset(0.0, 0.3, 0.0);
-            this.setTipPosition(0.0, 0.3, 0.0);
+            // Module3D.Rendering.SetTipOffset(0.0, 0.3, 0.0)
+            this.setTipPosition(0.0, 0.3, 0.0)
         }
     }
     setTipPosition(x, y, z) {
         setTimeout(function(){
-            Module3D.Rendering.SetTipOffset(x, y, z);
+            Module3D.Rendering.SetTipOffset(x, y, z)
         },500)
     }
     initToolsBtnEvent() {
-        let that = this;
-        // 控制菜单栏 收缩/展开
-        this.$unfoldBtn = $('.j-unfold');
-        this.$toolsWrap = $('.ct-tools');
+        let that = this
+        // 控制按钮操作栏 收缩/展开
+        this.$unfoldBtn = $('.j-unfold')
+        this.$toolsWrap = $('.ct-tools')
         this.$unfoldBtn.click(function () {
             if (!$(this).hasClass('z-select')) {
-                let width = that.$toolsWrap.width();
+                let width = that.$toolsWrap.width()
                 that.$toolsWrap.data('originwidth', width).animate({ width: '46px' }, 500, function () {
-                    $(this).find('.ct-btn').hide();
-                });
-                $(this).addClass('z-select');
+                    $(this).find('.ct-btn').hide()
+                })
+                $(this).addClass('z-select')
             }
             else {
-                $(this).removeClass('z-select');
-                let oldwidth = that.$toolsWrap.data('originwidth') + 48;
-                that.$toolsWrap.find('.ct-btn').show();
-                that.$toolsWrap.animate({ width: oldwidth + 'px' }, 400);
+                $(this).removeClass('z-select')
+                let oldwidth = that.$toolsWrap.data('originwidth') + 48
+                that.$toolsWrap.find('.ct-btn').show()
+                that.$toolsWrap.animate({ width: oldwidth + 'px' }, 400)
             }
-        });
+        })
+
+        this.$anglesWrap.on('click', 'a', function () {
+          if (!$(this).hasClass('active')) {
+            $(this).addClass('active').siblings().removeClass('active')
+            if($(this).index() === 1) {
+              that.activeAngleIndex = 2
+            } else {
+              that.activeAngleIndex = 0
+            }
+            that.renderDR()
+          }
+        })
         // 按钮组 A => 表面增强、边缘增强   @ CT 唯一
-        this.groupA = $('.j-tools .ct-btn[data-group="a"]');
+        this.groupA = $('.j-tools .ct-btn[data-group="a"]')
         this.groupA.click(function () {
             if ($(this).hasClass('active')) {
                 $(this).removeClass('active');
@@ -437,7 +447,7 @@ class CtViewer {
             if (renderType === 'surface') {
                 that.shaderA = 'raw';
             }
-            that.reDraw3D();
+            that.redraw3D();
             that.setShader();
         }
         // 渲染参数B => 超级穿透
@@ -489,7 +499,7 @@ class CtViewer {
                 default:
                     Module3D.Rendering.SetVolumeTransferTable(Module3D.Rendering.IMG_PROC_PARA.APIP_IC_COLORIZE);
             }
-            that.reDraw3D();
+            that.redraw3D();
             if (that.options.showDR) {
                 that.setShader();
             }
@@ -511,7 +521,7 @@ class CtViewer {
         });
         function inverse(showType) {
             Module3D.Rendering.SetInverseDisplay(showType);
-            that.reDraw3D();
+            that.redraw3D();
             if (that.options.showDR) {
                 that.slinstance.setInverse(showType);
                 that.slinstance.composer.render(0.1);
@@ -543,7 +553,7 @@ class CtViewer {
                 default:
                     Module3D.Rendering.ToAbove();
             }
-            that.reDraw3D();
+            that.redraw3D();
             //@FIXME 切换视角会将之前缩放的比例重置为初始值
             let newZoomVal = Module3D.Rendering.GetCameraZoomIndex();
             console.info(newZoomVal)
@@ -612,7 +622,7 @@ class CtViewer {
             Module3D.Rendering.DisplaySuspectObject(!type);
             that.drinstance.showSusobj(!type);
             that.slinstance.showSusobj(!type);
-            that.reDraw3D();
+            that.redraw3D();
         });
         /*
         显示操作按钮
@@ -715,24 +725,6 @@ class CtViewer {
         this.sql = new SqlLite();
     }
 }
-CtViewer.default = {
-    DrWidth: 400,
-    DrHeight: 400,
-    DrContainerID: 'canvasdr',// DR图像容器ID
-    CtWidth: 600,
-    CtHeight: 600,
-    CtContainerID: 'container',
-    SliceWidth: 400,
-    SliceHeight: 400,
-    SliceContainerID: 'canvasslice',
-    showDR: true, // 是否显示DR图像
-    showSlice: true, // 是否显示切片图像
-    showSusobj: true, // 是否"突出显示危险品"
-    slicePlaneVisible: true, // 是否显示切线平面
-    sizeIndexDefault: 6, //摄像头初始化时的放大比例
-    defaultTransparency: 0.33, //默认CT透明度值
-    callback: null
-}
 
 /**
  *
@@ -749,12 +741,11 @@ class DrViewer {
           DrWidth: 400, // 默认宽
           DrHeight: 400, // 默认高
           DrContainerID: 'canvasdr',// DR图像容器ID
-          showSusobj: true, // 是否"突出显示危险品"
+          showSusobj: true // 是否"突出显示危险品"
         }
         Object.assign(this.options, options)
         this.init()
     }
-
     init() {
         this.initSqlLite()
         this.initDrElement()
@@ -765,13 +756,12 @@ class DrViewer {
         this.shaderA = 'raw' //第一个参数。默认就是表面增强
         this.shaderB = 'standard' //第二个参数。默认是标准
         this.shaderC = 'default' //第三个参数。默认就是真彩色
-        this.isDanger = false  // 危险品和包裹显示 处理不同
         this.hasLoaded = false  // 判断图像是否加载完成的字段
         this.selectTipResult = null
         this.isTipSelected = false
         this.tipPos = [100,100]
         this.hasInsertTip = false
-        this.activeAngleIndex = 0
+
         // 页面元素
         this.body = $('body')
         this.loadingLayer = $('#loading')
@@ -782,6 +772,12 @@ class DrViewer {
         this.coloursBtn = $('.colours')
         this.marktipBtn = $('.marktip')
         this.$anglesWrap = $('.j-angles')
+        this.drContainer = $('.j-dr-container')
+        this.entityContainer = $('.j-entity-container')
+        this.entityImg = this.entityContainer.find('img')
+        this.entityBtnWrap = $('.j-entity-wrap')
+        this.entityBtn = this.entityBtnWrap.find('a')
+        this.angleIndex = 0
 
         this.drinstance = new Module3D.DRImageInstance()
 
@@ -797,6 +793,7 @@ class DrViewer {
         this.drinstance.setMMSelectCallback((data) => {
             this.setSelectTipResult(data)
         })
+        // tip 插入管理实例化
         this.tipManager = new Module3D.DRTipManager()
         this.tipManager.setDr(this.drinstance)
         // this.tipManager.bindTipToDr(0,[['js/wgl/0303s.png',100,200], ['js/wgl/0303r.png',100,100]])
@@ -804,15 +801,15 @@ class DrViewer {
 
     }
     loadStart() {
-        this.loadingLayer.show()
+        // this.loadingLayer.show()
         this.hasLoaded = false
     }
     loadEnding() {
         let that = this
-        this.resetDR()
+        // this.resetDR()
+        // this.loadingLayer.hide()
         this.hasLoaded = true
-        this.loadingLayer.hide()
-        if (this.isDanger) {
+        if (this.activeImgInfo.isTip) {
             this.drinstance.switchToTipImage(true)
         } else {
             this.drinstance.switchToTipImage(false)
@@ -820,53 +817,41 @@ class DrViewer {
         this.drinstance.showSusobj(this.options.showSusobj)
         this.loadEndCallback && this.loadEndCallback()
     }
-    _initShowDR(angles) {
-        let that = this
-        if (angles.length === 0) {
-            NSTS.Plugin.Alert.Error('参数非法')
-            return
-        }
-        // this.loadStart()
-        let anglesHTML = ''
-        angles.forEach(function (angle, index) {
-            let isActive = index == 0 ? 'active' : ''
-            let indexName = index == 0 ? 'View 1' : 'View 2'
-            anglesHTML += `<a class="${isActive}" data-fileid="${angle.fileID}">${indexName}</a>`
-        })
-        this.$anglesWrap.html(anglesHTML)
-        //进行视角切换初始化事件绑定
-        this.$anglesWrap.find('a').click(function () {
-            let fileID = $(this).data('fileid')
-            $(this).addClass('active').siblings().removeClass('active')
-            that.showDR(fileID)
-        })
-        //进入DR图像渲染工作
-        this.showDR(angles[0].fileID)
-    }
-    showDR(id) {
-        this.sql.getData(id, this.initShowDR.bind(this))
+    showDR(imgInfo) {
+      this.activeAngleIndex = 0
+      this.activeImgInfo = imgInfo
+      this.sql.getData_DR(imgInfo, this.initShowDR.bind(this))
         // this.sql.dropTable()
     }
     initShowDR(data) {
-      console.log(99999)
-      console.log(data)
+      this.loadStart()
+      // console.log('DR图像渲染的原始数据！')
+      // console.log(data)
       let that = this
       this.renderingData = data
-      // this.loadStart()
+      this.entityContainer.hide()
+      this.drContainer.css('display', 'flex')
       let anglesHTML = ''
       data.forEach((angle, index) => {
-        let isActive = index == 0 ? 'active' : ''
-        let indexName = index == 2 ? '视角一' : '视角二'
+        let isActive = index === 0 ? 'active' : ''
+        let indexName = index === 0 ? '视角一' : '视角二'
         if (angle !== null && (index === 0 || index === 2)) {
           anglesHTML += `<a class="${isActive}">${indexName}</a>`
         }
       })
+      if (this.activeImgInfo.thumbnails.length !== 0) {
+        this.entityImg.attr('src', this.activeImgInfo.thumbnails[0].url)
+        this.entityBtn.removeClass('active')
+        this.entityBtnWrap.show()
+      } else {
+        this.entityBtnWrap.hide()
+      }
       this.$anglesWrap.html(anglesHTML)
       this.renderDR()
     }
-    renderDR(renderObj) {
+    renderDR() {
         console.log('%c Show DR ... ', 'background:#f90;color:#fff')
-        this.drinstance.loadTexture(this.options.DrContainerID, this.renderingData[this.activeAngleIndex], 600, 600)
+        this.drinstance.loadTexture(this.options.DrContainerID, this.renderingData[this.activeAngleIndex], this.options.DrWidth, this.options.DrHeight)
         if (this.renderingData[this.activeAngleIndex + 1] !== null) {
           this.drinstance.loadTextureApp(this.renderingData[this.activeAngleIndex + 1])
         }
@@ -986,8 +971,21 @@ class DrViewer {
     // 事件绑定
     initToolsBtnEvent() {
         let that = this
+        // 实物图显示
+        this.entityBtn.on('click', function() {
+          $(this).addClass('active')
+          that.$anglesWrap.find('a').addClass('noactive')
+          that.drContainer.hide()
+          that.entityContainer.css('display', 'flex')
+        })
         // 视角切换
         this.$anglesWrap.on('click', 'a', function() {
+          if (!that.drContainer.is(':visible')) {
+            that.drContainer.css('display', 'flex')
+            that.entityContainer.hide()
+            that.entityBtn.removeClass('active')
+            that.$anglesWrap.find('a').removeClass('noactive')
+          }
           if (!$(this).hasClass('active')) {
             $(this).addClass('active').siblings().removeClass('active')
             if($(this).index() === 1) {
@@ -1209,7 +1207,7 @@ class DrViewer {
         })
     }
     initSqlLite() {
-        this.sql = new SqLiteDr()
+        this.sql = new SqlLite()
     }
 }
 
@@ -1219,9 +1217,12 @@ class DrViewer {
  *
  * @class SqLite
  *
- * CT 图像本地存储
+ * 图像本地存储
+ * 图像包含 id 和 fileID
+ * CT 图像和 DR 图像包含共同的 fileID
+ * id用来查询资源，fileID用来映射相应的存储数据
  */
-class SqLiteCt {
+class SqlLite {
     constructor(mode) {
         this.mode = 'load'
         this.version = '3'
@@ -1251,88 +1252,71 @@ class SqLiteCt {
       this.dbHelper.dropTable(this.tableName)
       console.log(`%c ${this.tableName}数据表 删除成功！！！`, 'background:#f00')
     }
-    fileIdIsExist(fileID, callback) {
-
-    }
-    getData_CT(fileid, callback) {
-      console.warn(fileid)
+    getData_CT(imgInfo, callback) {
       let that = this
-      this.dbHelper.query(`select ImgData, ImgDesData, SuspectCubeData, Density FROM File_MainStore WHERE FileID =${fileid}`, function (e, reader) {
-        // 还没有存过这条 fileID 的数据
+      this.dbHelper.query(`select ImgData, ImgDesData, SuspectCubeData, Density FROM File_MainStore WHERE FileID =${imgInfo.fileID}`, function (e, reader) {
+        // 本地还没有保存过这条 fileID 的数据
         if (reader !== null && reader.rows.length === 0) {
-          console.log(`%c 数据远程下载 ... `, 'background:#000;color:#fff')
-
-          $.ajax({
-            url: `http://10.13.62.25:8070/api/CT/${fileid}`,
-            headers: {
-              Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
-            },
-            success (rawData) {
-              console.log(rawData)
-              that.fetchData(rawData.package.CT).then(data => {
-                console.log(data)
-                let pushdata = []
-                pushdata.push([
-                  {'name': 'FileID', 'value': rawData.package.id},
-                  {'name': 'ImgData', 'value': data[0]},
-                  {'name': 'ImgDesData', 'value': data[1]},
-                  {'name': 'SuspectCubeData', 'value': data[2]},
-                  {'name': 'Density', 'value': data[3]}
-                ])
-                that.dbHelper.insert(that.tableName, pushdata)
-                callback(data)
-              })
-            }
+          console.log(`%c 数据远程下载 ... `, 'background:#c41d7f;color:#fff')
+          that.fetchData_CT(imgInfo.ct).then(data => {
+            console.log(data)
+            let pushdata = []
+            pushdata.push([
+              {'name': 'FileID', 'value': imgInfo.fileID},
+              {'name': 'ImgData', 'value': data[0]},
+              {'name': 'ImgDesData', 'value': data[1]},
+              {'name': 'SuspectCubeData', 'value': data[2]},
+              {'name': 'Density', 'value': data[3]}
+            ])
+            that.dbHelper.insert(that.tableName, pushdata)
+            callback(data)
           })
         }
-        // 说明存过这个 fileID 数据
+        // 本地存储了这个 fileID 数据
         if (reader != null && reader.rows !== null && reader.rows.length == 1) {
           let dbobj = reader.rows[0]
-          // 没有 CT 相关的数据。因为 ImgData 数据没有
-          if (!dbobj[0]) {
-            $.ajax({
-              url: `http://10.13.62.25:8070/api/CT/${fileid}`,
-              headers: {
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NUVEMjkyQTkwQUNFQkNGNUZCNTYxOTNBMzMxQ0NDMiIsImlhdCI6MTUxNjg0NjI0MCwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9leHBpcmF0aW9uIjoiMjYwMDY0MDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2MDgwNzkyMzkzMzA1MzMzMDAiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoi6LaF57qn566h55CG5ZGYIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwZXJBZG1pbiIsIk9yZ0lEIjoiMzYwODA3OTIzOTMzMDUzMzM3NiIsIkVudGVycHJpc2VDb2RlIjoiIiwibmJmIjoxNTE2ODQ2MjM5LCJleHAiOjE1NDI4NTI2MzksImlzcyI6Ik5TVFMuTlVDVEVDSC5DT00iLCJhdWQiOiJOU1RTX1VTRVIifQ.3_aYso892uDawzGIh46EKx8t2cYuk6i01t9EZmUD2uw'
-              },
-              success (rawData) {
-                console.log(rawData)
-                that.fetchData(rawData.package.CT).then(data => {
-                  console.log(data)
-                  let updateData = []
-                  updateData.push([
-                    {'name': 'ImgData', 'value': data[0]},
-                    {'name': 'ImgDesData', 'value': data[1]},
-                    {'name': 'SuspectCubeData', 'value': data[2]},
-                    {'name': 'Density', 'value': data[3]}
-                  ])
-                  let whereData = []
-                  whereData.push([
-                    {'name': 'FileID', 'value': fileid}
-                  ])
-                  that.dbHelper.update(that.tableName, updateData, whereData)
-                  callback(data)
-                })
-              }
+          // 没有 CT 相关的数据。之存储了DR的数据，需要update这条 fileID 的数据
+          if (dbobj.ImgData === null) {
+            console.log(`%c CT数据本地更新 ... `, 'background:#eb2f96;color:#fff')
+            that.fetchData_CT(imgInfo.ct).then(data => {
+              console.log(data)
+              let updateData = []
+              updateData.push([
+                {'name': 'ImgData', 'value': data[0]},
+                {'name': 'ImgDesData', 'value': data[1]},
+                {'name': 'SuspectCubeData', 'value': data[2]},
+                {'name': 'Density', 'value': data[3]}
+              ])
+              let whereData = []
+              whereData.push(
+                {'name': 'FileID', 'value': imgInfo.fileID}
+              )
+              that.dbHelper.update(that.tableName, updateData, whereData)
+              callback(data)
             })
           // 本地保存了需要查询的数据
           } else {
-            console.log(`%c 数据本地读取 ... `, 'background:#eb2f96;color:#fff')
+            console.log(`%c 数据本地读取 ... `, 'background:#f759ab;color:#fff')
             console.log(dbobj)
             callback(Object.values(dbobj))
           }
         }
-        else {
-
-        }
       })
     }
-    fetchData_CT(data) {
+    // 视角主体数据
+    fetchData_CT(ctObj) {
       let fetchDataFns = []
-      // 视角主体数据
-      data.forEach(item => {
-        fetchDataFns.push(this.loadDataByFileReader(item.url))
-        if (item.suspect === '') {
+      // Object.entries(ctObj).forEach(item => {
+      //   console.log(item)
+      // })
+      Object.values(ctObj).forEach(item => {
+        if (item.suspect !== '') {
+          if (item.endsWith('.txt')) {
+            fetchDataFns.push(this.loadDataByFileReaderTxt(item))
+          } else {
+            fetchDataFns.push(this.loadDataByFileReader(item))
+          }
+        } else {
           fetchDataFns.push(this.loadEmptyData())
         }
       })
@@ -1346,15 +1330,67 @@ class SqLiteCt {
           })
       })
     }
-    getData_DR() {
-
+    getData_DR(imgInfo, callback) {
+      let that = this
+      this.dbHelper.query(`select Angle1, Suspect1, Angle2, Suspect2 FROM File_MainStore WHERE FileID =${imgInfo.fileID}`, function (e, reader) {
+        // 本地还没有保存过这条 fileID 的数据
+        if (reader !== null && reader.rows.length === 0) {
+          console.log(`%c 数据远程下载 ... `, 'background:#c41d7f;color:#fff')
+          that.fetchData_DR(imgInfo.dr).then(data => {
+            console.log(data)
+            let pushdata = []
+            pushdata.push([
+              {'name': 'FileID', 'value': imgInfo.fileID},
+              {'name': 'Angle1', 'value': data[0]},
+              {'name': 'Suspect1', 'value': data[1]},
+              {'name': 'Angle2', 'value': data[2] || null},
+              {'name': 'Suspect2', 'value': data[3] || null}
+            ])
+            that.dbHelper.insert(that.tableName, pushdata)
+            callback(data)
+          })
+        } else {
+          // 本地存储了这个 fileID 数据
+          if (reader != null && reader.rows !== null && reader.rows.length == 1) {
+            let dbobj = reader.rows[0]
+            console.log(reader)
+            // 没有 DR 相关的数据存储，需要 update 这条 fileID 的数据
+            if (dbobj.Angle1 === null) {
+              console.log(`%c DR数据本地更新 ... `, 'background:#eb2f96;color:#fff')
+              that.fetchData_DR(imgInfo.dr).then(data => {
+                console.log(data)
+                let updateData = []
+                updateData.push([
+                  {'name': 'Angle1', 'value': data[0]},
+                  {'name': 'Suspect1', 'value': data[1]},
+                  {'name': 'Angle2', 'value': data[2]},
+                  {'name': 'Suspect2', 'value': data[3]}
+                ])
+                let whereData = []
+                whereData.push(
+                  {'name': 'FileID', 'value': imgInfo.fileID}
+                )
+                that.dbHelper.update(that.tableName, updateData, whereData)
+                callback(data)
+              })
+            // 本地保存了需要查询的数据
+            } else {
+              console.log(`%c 数据本地读取 ... `, 'background:#f759ab;color:#fff')
+              console.log(dbobj)
+              callback(Object.values(dbobj))
+            }
+          }
+        }
+      })
     }
-    fetchData_DR(data) {
+    fetchData_DR(drArr) {
       let fetchDataFns = []
       // 视角主体数据
-      data.forEach(item => {
+      drArr.forEach(item => {
         fetchDataFns.push(this.loadDataByFileReader(item.url))
-        if (item.suspect === '') {
+        if (item.suspect !== '') {
+          fetchDataFns.push(this.loadDataByFileReader(item.suspect))
+        } else {
           fetchDataFns.push(this.loadEmptyData())
         }
       })
@@ -1368,6 +1404,7 @@ class SqLiteCt {
           })
       })
     }
+    // 下载 png 图像信息
     loadDataByFileReader(url) {
       return new Promise((resolve, reject) => {
         let reader = new FileReader()
@@ -1390,9 +1427,32 @@ class SqLiteCt {
         }
       })
     }
-    // 当 suspect='' 时，直接返回空数据
-    loadEmptyData() {
+    // 下载 txt 文件信息
+    loadDataByFileReaderTxt(url) {
       return new Promise((resolve, reject) => {
+        let reader = new FileReader()
+        let xhr = new XMLHttpRequest()
+        xhr.open('get', url, true)
+        xhr.responseType = 'blob'
+        xhr.onload = function () {
+          if (this.status === 200) {
+            reader.readAsText(this.response)
+          } else {
+            console.log(this.statusText)
+          }
+        }
+        xhr.send()
+        reader.onerror = error => {
+          reject(error)
+        }
+        reader.onload = data => {
+          resolve(data.target.result)
+        }
+      })
+    }
+    // 当 suspect='' 时，直接返回 null 数据
+    loadEmptyData() {
+      return new Promise(resolve => {
         resolve(null)
       })
     }
@@ -1401,7 +1461,7 @@ class SqLiteCt {
 /**
  * DR 图像本地存储
  */
-class SqLiteDr {
+class SqlLiteDr {
   constructor(mode) {
       this.mode = 'load'
       this.version = '3'

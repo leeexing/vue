@@ -1,12 +1,16 @@
 ﻿/**
-*   CT 图像显示
+*   CT 图像显示 业务类
 */
 
 "use strict"
 class TrainingBase {
-    constructor(options) {
-        this.options = $.extend({}, TrainingBase.defaults, options || {});
-        this.initStart(); 
+    constructor(options={}) {
+        this.options = {
+          showTool: true, //是否需要显示工具条
+          callback: ''
+        }
+        Object.assign(this.options, options)
+        this.initStart();
     }
     initStart() {
         // this.bindEventBTClose(); // 全屏关闭按钮初始化
@@ -244,15 +248,10 @@ class TrainingBase {
         }
     }
 }
-TrainingBase.defaults = {
-    showTool: true,//是否需要显示工具条
-    callback: ''
-};
 
-/*
-*   下面为子类
-*/
-
+                          //////////////////////////////////////
+                          /////       下面为子类       /////////
+                          //////////////////////////////////////
 
 /* 1
     说明：CT 图像库全屏查看
@@ -266,24 +265,30 @@ class MapPreviewCT extends TrainingBase {
     initElement() {
         $('#lessontitle').text('CT 图像查看');
         $('.j-header-info').css('display', 'flex');
-        $('.map-menu').show();
-        $('.j-map').click(function () {
-            $('.map-menu').css('transform', 'translateX(0)');
-        });
+        // $('.map-menu').show();
+        // $('.j-map').click(function () {
+        //     $('.map-menu').css('transform', 'translateX(0)');
+        // });
     }
-    init(id) {
-        this.LessonID = id;
-        let that = this;
-        NSTS.NET.GET(APIURI + 'api/CT/DetailInfo?id=' + this.LessonID, null, function (data) {
-            console.info(data);
-            if (!data.success) {
-                NSTS.Plugin.Alert.Error(data.error, function () {
-                    that.btclose.click();
-                });
-                return;
-            }
-            that.intoResShow([data.data]);
-        });
+    init(executeSql, initShowId=null) {
+      let that = this;
+      let mapMenu = new MapMenu({imgInstance: this, executeSql, initShowId})
+
+        // this.LessonID = id;
+        // let that = this;
+        // NSTS.NET.GET(APIURI + 'api/CT/DetailInfo?id=' + this.LessonID, null, function (data) {
+        //     console.info(data);
+        //     if (!data.success) {
+        //         NSTS.Plugin.Alert.Error(data.error, function () {
+        //             that.btclose.click();
+        //         });
+        //         return;
+        //     }
+        //     that.intoResShow([data.data]);
+        // });
+    }
+    initShow(imgInfo) {
+      this.Viewer.initShow(imgInfo)
     }
     intoResShow(resinfo) {
         if (this.setResList(resinfo)) {
@@ -1537,7 +1542,7 @@ class MyMistake_CT extends TrainingBase {
 
 
 /*
-    说明：全屏不用初始化 
+    说明：全屏不用初始化
     修改：不用初始绑定，可做判断在进入全屏
     版本：@2017/6.13
 */
