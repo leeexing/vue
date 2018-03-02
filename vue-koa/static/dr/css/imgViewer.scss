@@ -1291,6 +1291,7 @@ to{
     }
   }
   .map-content {
+    position: relative;
     flex: 1;
     width: 100%;
     max-height: 90%;
@@ -1301,7 +1302,7 @@ to{
     li {
       height: 36px;
       background: #f5f5f5;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       cursor: pointer;
       &:hover {
         background: #e8e8e8;

@@ -253,14 +253,6 @@ class MapPreviewDR extends TrainingBaseDR {
       this.Viewer.showDR(imgInfo)
       this.doSubClassThing(imgInfo)
     }
-    IntoResShow(resinfo) {
-        if (this.setResList(resinfo)) {
-            this.ResInfo = resinfo
-            this.Viewer.isDanger = resinfo.isDanger
-            this.angles = resinfo.angles
-            this._show()
-        }
-    }
     doSubClassThing(imgInfo) {
         this.showImgInfo(imgInfo)
         this.checkPreNext()

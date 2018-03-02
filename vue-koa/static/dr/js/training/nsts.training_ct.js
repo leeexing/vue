@@ -120,8 +120,7 @@ class TrainingBase {
         throw new Error("抽象方法，必须由子类实现！");
     }
     // 显示图像相关信息，业务不同这个不一定需要显示（考试不需要）
-    showImgInfo(data) {
-        let imgInfo = data;
+    showImgInfo(imgInfo) {
         $('.img-name').text(imgInfo.name);// 图像名称
         $('.img-kpoint').text(imgInfo.knowledgeName || '暂无');// 知识点
         $('.goods-name').text(imgInfo.typeName);// 物品名称
@@ -271,8 +270,7 @@ class MapPreviewCT extends TrainingBase {
         // });
     }
     init(executeSql, initShowId=null) {
-      let that = this;
-      let mapMenu = new MapMenu({imgInstance: this, executeSql, initShowId})
+      this.mapMenu = new MapMenu({imgInstance: this, executeSql, initShowId})
 
         // this.LessonID = id;
         // let that = this;
@@ -289,64 +287,37 @@ class MapPreviewCT extends TrainingBase {
     }
     initShow(imgInfo) {
       this.Viewer.initShow(imgInfo)
+      this.doSubClassThing(imgInfo)
     }
-    intoResShow(resinfo) {
-        if (this.setResList(resinfo)) {
-            this.renderInfo = resinfo[0];
-            this._show();
-        }
-    }
-    doSubclassThing() {
-        this.showImgInfo(this.renderInfo);
-        this.checkPreNext();
+    doSubClassThing(imgInfo) {
+      this.showImgInfo(imgInfo)
+      this.checkPreNext()
     }
     prevImg() {
         if (this.Viewer.hasLoaded) {
-            let $imgActiveParent = $('#tree .tree-anchor.active').parent().parent();
-            let imgType = $imgActiveParent.prev().data('type');
-            let imgCount = +$('#tree .tree-anchor.active').parent().parent().data('imglength');
-            let $imgActive = $('#tree .tree-anchor.active').parent().index();
-            if ($imgActive >= 1) {
-                let prevIndex = $imgActive - 1;
-                $imgActiveParent.find('.tree-anchor').removeClass('active');
-                let resId = $imgActiveParent.find('li').eq(prevIndex).find('.tree-anchor').addClass('active').data('resid');
-                this.init(resId);
-            }
+          this.mapMenu.prevImgShow()
         }
     }
     nextImg() {
         if (this.Viewer.hasLoaded) {
-            let $imgActiveParent = $('#tree .tree-anchor.active').parent().parent();
-            let imgType = $imgActiveParent.prev().data("type");
-            let imgCount = +$('#tree .tree-anchor.active').parent().parent().data('imglength');
-            let $imgActive = $('#tree .tree-anchor.active').parent().index();
-            if ($imgActive < imgCount - 1) {
-                let nextIndex = $imgActive + 1;
-                $imgActiveParent.find('.tree-anchor').removeClass('active');
-                let resId = $imgActiveParent.find('li').eq(nextIndex).find('.tree-anchor').addClass('active').data('resid');
-                this.init(resId);
-            }
+          this.mapMenu.nextImgShow()
         }
     }
     //说明：检测上下幅是否需要设置为“disabled”
     checkPreNext() {
-        let imgCount = +$('#tree .tree-anchor.active').parent().parent().data('imglength');
-        let $imgActiveIndex = $('#tree .tree-anchor.active').parent().index() + 1;
-        if (imgCount === 1) {
-            this.btPrevWrap.hide();
-            this.btNextWrap.hide();
+      if (this.mapMenu.imgCount == 1) {
+          this.btPrevWrap.hide()
+          this.btNextWrap.hide()
+      } else {
+        if (this.mapMenu.activeIndex === 0) {
+            this.btPrevWrap.hide()
+        } else if (this.mapMenu.activeIndex == this.mapMenu.imgCOunt) {
+            this.btNextWrap.hide()
         } else {
-            this.btPrevWrap.show();
-            this.btNextWrap.show();
+            this.btPrevWrap.show()
+            this.btNextWrap.show()
         }
-        if ($imgActiveIndex === 1) {
-            this.btPrevWrap.hide();
-        } else if ($imgActiveIndex === imgCount) {
-            this.btNextWrap.hide();
-        } else {
-            this.btPrevWrap.show();
-            this.btNextWrap.show();
-        }
+      }
     }
 }
 

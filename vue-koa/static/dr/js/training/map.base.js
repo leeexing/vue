@@ -83,12 +83,28 @@ class MapMenu {
   prevImgShow() {
     this.activeIndex = Math.max(0, --this.activeIndex)
     this.mapOuter.find(`li:eq(${this.activeIndex})`).click()
+    this.shiftPosition(-1)
     return this.activeIndex === 0
   }
   nextImgShow() {
     this.activeIndex = Math.min(this.imgCount, ++this.activeIndex)
     this.mapOuter.find(`li:eq(${this.activeIndex})`).click()
+    this.shiftPosition(1)
     return this.activeIndex === this.imgCount
+  }
+  shiftPosition(type) {
+    let scrollHeight = this.imgCount * 40
+    let activeHeight = this.mapOuter.find('li.active').position().top
+    let scrollTop = this.mapOuter.find('.map-content').scrollTop()
+    if (activeHeight > 600) {
+      scrollTop = scrollTop + 40 * type + 300
+      this.mapOuter.find('.map-content').scrollTop(scrollTop)
+    }
+    if (activeHeight < 60) {
+      scrollTop = scrollTop + 40 * type
+      this.mapOuter.find('.map-content').scrollTop(scrollTop)
+    }
+
   }
   loadMore(url) {
     //
