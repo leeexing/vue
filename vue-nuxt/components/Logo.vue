@@ -1,79 +1,60 @@
 <template>
-  <div class="VueToNuxtLogo">
-    <div class="Triangle Triangle--two"></div>
-    <div class="Triangle Triangle--one"></div>
-    <div class="Triangle Triangle--three"></div>
-    <div class="Triangle Triangle--four"></div>
-  </div>
+<div class="components-layout-demo-basic"> 
+  <v-layout>
+      <v-header class="ant-layout-header">
+        <img
+        src="http://cdn2.jianshu.io/assets/web/nav-logo-4c7bbafe27adc892f3046e6978459bac.png" alt="简书">
+      </v-header>
+      <v-layout>
+          <v-sider style="background: #f90;">
+              hehehehehehe
+          </v-sider>
+          <v-layout style="padding:0 24px 24px">
+              <v-breadcrumb style="margin:12px 0">
+                  <v-breadcrumb-item>Home</v-breadcrumb-item>
+                  <v-breadcrumb-item href="">List</v-breadcrumb-item>
+                  <v-breadcrumb-item href="">App</v-breadcrumb-item>
+              </v-breadcrumb>
+              <v-content style="background: #fff; padding: 24px; margin: 0; min-height: 280px">Content</v-content>
+          </v-layout>
+      </v-layout>
+  </v-layout>
+</div>
 </template>
 
-<style>
-.VueToNuxtLogo {
-  display: inline-block;
-  animation: turn 2s linear forwards 1s;
-  transform: rotateX(180deg);
-  position: relative;
-  overflow: hidden;
-  height: 180px;
-  width: 245px;
+<style scoped>
+#components-layout-demo-top-side .logo {
+  width: 120px;
+  height: 31px;
+  background: #333;
+  border-radius: 6px;
+  margin: 16px 28px 16px 0;
+  float: left;
 }
-
-.Triangle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
+.components-layout-demo-basic {
+  text-align: center;
+  margin: 2rem;
 }
-
-.Triangle--one {
-  border-left: 105px solid transparent;
-  border-right: 105px solid transparent;
-  border-bottom: 180px solid #41B883;
+.components-layout-demo-basic .ant-layout-header,
+.components-layout-demo-basic .ant-layout-footer {
+  background: #7dbcea;
+  color: #fff;
 }
-
-.Triangle--two {
-  top: 30px;
-  left: 35px;
-  animation: goright 0.5s linear forwards 3.5s;
-  border-left: 87.5px solid transparent;
-  border-right: 87.5px solid transparent;
-  border-bottom: 150px solid #3B8070;
+.components-layout-demo-basic .ant-layout-footer {
+  line-height: 1.5; 
 }
-
-.Triangle--three {
-  top: 60px;
-  left: 35px;
-  animation: goright 0.5s linear forwards 3.5s;
-  border-left: 70px solid transparent;
-  border-right: 70px solid transparent;
-  border-bottom: 120px solid #35495E;
+.components-layout-demo-basic .ant-layout-sider {
+  background: #3ba0e9;
+  color: #fff;
+  line-height: 120px;
 }
-
-.Triangle--four {
-  top: 120px;
-  left: 70px;
-  animation: godown 0.5s linear forwards 3s;
-  border-left: 35px solid transparent;
-  border-right: 35px solid transparent;
-  border-bottom: 60px solid #fff;
-}
-
-@keyframes turn {
-  100% {
-    transform: rotateX(0deg);
-  }
-}
-
-@keyframes godown {
-  100% {
-    top: 180px;
-  }
-}
-
-@keyframes goright {
-  100% {
-    left: 70px;
-  }
+.components-layout-demo-basic .ant-layout-content {
+  background: rgba(16, 142, 233, 1);
+  color: #fff;
+  min-height: 120px;
+  line-height: 120px;
 }
 </style>
+<script>
+  
+</script>

@@ -1,20 +1,15 @@
 <template>
-  <section class="container">
-    <div>
-      <logo/>
-      <h1 class="title">
-        vue-nuxt
-      </h1>
-      <h2 class="subtitle">
-        learn ssr in order to reset project
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">Documentation</a>
-        <a href="https://github.com/nuxt/nuxt.js" target="_blank" class="button--grey">GitHub</a>
-        <a href="/about" class="button--grey">about</a>
-      </div>
-    </div>
-  </section>
+  <!-- <logo/> -->
+  <div class="components-layout-demo-basic"> 
+    <v-layout>
+        <v-header>Header</v-header>
+        <v-layout>
+            <v-sider>Sider</v-sider>
+            <v-content>Content</v-content>
+        </v-layout>
+        <v-footer>Footer</v-footer>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -27,33 +22,28 @@ export default {
 }
 </script>
 
-<style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+<style scoped>
+.components-layout-demo-basic {
+    text-align: center;
+    margin: 2rem;
 }
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+.components-layout-demo-basic .ant-layout-header,
+.components-layout-demo-basic .ant-layout-footer {
+    background: #7dbcea;
+    color: #fff;
 }
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+.components-layout-demo-basic .ant-layout-footer {
+    line-height: 1.5;
 }
-
-.links {
-  padding-top: 15px;
+.components-layout-demo-basic .ant-layout-sider {
+    background: #3ba0e9;
+    color: #fff;
+    line-height: 120px;
+}
+.components-layout-demo-basic .ant-layout-content {
+    background: rgba(16, 142, 233, 1);
+    color: #fff;
+    min-height: 120px;
+    line-height: 120px;
 }
 </style>
